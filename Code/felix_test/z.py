@@ -6,23 +6,20 @@ from plotly.subplots import make_subplots
 
 # TODO: load other data
 # TODO: add other plots
+# TODO: https://plotly.com/python/range-slider/
 # TODO: decide on styling (colors, marks, etc.)
 STYLING = {
-    'mode': 'lines+markers',  # Add line+markers mode
-    'line': dict(width=2),    # Set consistent line width
-    'marker': dict(size=6),   # Set consistent marker size
-    'showlegend': False,
 }
 
 def load_inflation_data(path):
-    years = pd.date_range(start='2000', end='2025', freq='Y').strftime('%Y')
+    years = pd.date_range(start='2000', end='2025', freq='YE').strftime('%Y')
     return {
         "de": pd.Series(np.random.normal(2, 1, len(years)), index=years),
         "sl": pd.Series(np.random.normal(6, 3, len(years)), index=years)
     }
 
 def load_GDP_data(path):
-    years = pd.date_range(start='2000', end='2024', freq='Y').strftime('%Y')
+    years = pd.date_range(start='2000', end='2024', freq='YE').strftime('%Y')
     return {
         "de": pd.Series(np.linspace(25000, 45000, len(years)) + np.random.normal(0, 1000, len(years)), index=years),
         "sl": pd.Series(np.linspace(2000, 4000, len(years)) + np.random.normal(0, 200, len(years)), index=years)
@@ -39,10 +36,10 @@ def load_tourism_data(path):
     return {"sl":df}
 
 def load_data():
-    inflation_path = '../../srilanka/data/inflation/results.csv'
-    GDP_path = '../../srilanka/data/GDP/results.csv'
-    happiness_path = '../../srilanka/data/happiness/results.csv'
-    tourism_path = '../../srilanka/data/tourism/sltda.csv'
+    inflation_path = '../../data/inflation/results.csv'
+    GDP_path = '../../data/GDP/results.csv'
+    happiness_path = '../../data/happiness/results.csv'
+    tourism_path = '../../data/tourism/sltda.csv'
 
     data = {
         'inflation': load_inflation_data(inflation_path),
@@ -59,8 +56,7 @@ def plot_inflation_data(data, fig):
                 x=data['inflation'][country].index,
                 y=data['inflation'][country].values,
                 name=label,
-                hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>Inflation: %{{y:.1f}}%<br><extra></extra>",
-                **STYLING,
+                hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>Inflation: %{{y:.1f}}%<br><extra></extra>"
             ),
             row=1, col=1
         )
@@ -72,8 +68,7 @@ def plot_GDP_data(data, fig):
                 x=data['GDP'][country].index,
                 y=data['GDP'][country].values,
                 name=label,
-                hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>GDP per capita: $%{{y:,.0f}}<br><extra></extra>",
-                **STYLING,
+                hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>GDP per capita: $%{{y:,.0f}}<br><extra></extra>"
             ),
             row=1, col=2
         )
@@ -114,8 +109,7 @@ def plot_happiness_data(data, fig):
                             df['Perceptions of corruption'],
                             df['Dystopia + residual']
                         )),
-                        hovertemplate=hovertemplate,
-                        **STYLING,
+                        hovertemplate=hovertemplate
                     ),
                     row=2, col=1
                 )
@@ -127,8 +121,7 @@ def plot_tourism_data(data, fig):
             x=data['tourism']['sl'].index,
             y=data['tourism']['sl']['tourists arrived'],
             name='Sri Lanka',
-            hovertemplate="<b>Sri Lanka</b><br>Year: %{x}<br>Tourists: %{y:,.0f}<br><extra></extra>",
-            **STYLING,
+            hovertemplate="<b>Sri Lanka</b><br>Year: %{x}<br>Tourists: %{y:,.0f}<br><extra></extra>"
         ),
         row=2, col=2
     )
@@ -145,12 +138,23 @@ fig = make_subplots(
     rows=2, cols=2,
     subplot_titles=('Inflation', 'GDP', 'Happiness Score', 'Tourism')
 )
+plot_data(data, fig)
+
+# Styling
 fig.update_layout(
     height=800, # TODO: make this dynamic?
     title_text="Sri Lanka Indicators", # TODO
-    xaxis=dict(range=[2000, 2025])
+    xaxis4=dict(rangeslider=dict(visible=True)),
+    # Link all x-axes together
+    xaxis=dict(matches='x4'),
+    xaxis2=dict(matches='x4'),
+    xaxis3=dict(matches='x4'),
 )
-plot_data(data, fig)
-
+fig.update_traces(
+    mode='lines+markers',
+    line=dict(width=2),
+    marker=dict(size=6),
+    showlegend=False,
+)
 # render website
 st.plotly_chart(fig)
