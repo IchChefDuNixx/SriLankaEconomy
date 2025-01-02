@@ -2,7 +2,7 @@
 
 ## Important events from 2000
 
-Tsunami (2004)  
+Tsunami (2004)
 - more than 30,000 people were killed
 - thousands were misplaced
 - Infrastructure destroyed and fishing communities wiped out
@@ -31,7 +31,7 @@ Corona pandemic (2020 - 2021)
 - Tourism came to a halt
 - Unemployment increased from 4.8% in 2019 to 5.5% in 2020
 
-Economic Crisis
+Economic Crisis (2019-present)
 
 Protests (2022)
 - Reasons :  financially unstable to buy necessities such as food, medical supplies, fuel, gas, and more
