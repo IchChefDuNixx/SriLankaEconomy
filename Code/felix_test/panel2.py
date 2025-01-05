@@ -10,9 +10,10 @@ import streamlit as st
 # TODO: decide on styling (colors, marks, etc.)
 
 inflation_path = '../../data/inflation/results.csv'
-GDP_path = '../../data/GDP/results.csv'
+GDP_path = '../../data/nici stuff/gdp_de_sl.csv'
 happiness_path = '../../data/happiness/results.csv'
 tourism_path = '../../data/tourism/sltda.csv'
+COLORS = {'Germany': '#4DB6AC', 'Sri Lanka': '#FF7043'}
 
 
 def load_inflation_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
@@ -24,17 +25,10 @@ def load_inflation_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
 
 
 def load_GDP_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    years = pd.date_range(start='2000', end='2024', freq='YE').strftime('%Y')
-    return {
-        "de": pd.Series(
-            np.linspace(25000, 45000, len(years)) + np.random.normal(0, 1000, len(years)),
-            index=years
-        ),
-        "sl": pd.Series(
-            np.linspace(2000, 4000, len(years)) + np.random.normal(0, 200, len(years)),
-            index=years
-        )
-    }
+    df = pd.read_csv(path, index_col=[0, 1])
+    de = df.xs('Germany', level=1)
+    sl = df.xs('Sri Lanka', level=1)
+    return {"de": de, "sl": sl}
 
 
 def load_happiness_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
@@ -69,8 +63,8 @@ def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]):
     for country, label in [('sl', 'Sri Lanka'), ('de', 'Germany')]:
         fig.add_trace(
             go.Scatter(
-                x=data['inflation'][country].index,
-                y=data['inflation'][country].values,
+                x=data[country].index,
+                y=data[country].values,
                 name=label,
                 hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>Inflation: %{{y:.1f}}%<br><extra></extra>"
             )
@@ -84,47 +78,71 @@ def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]):
 
     return fig
 
-
+# TODO: https://data.ecb.europa.eu/data/datasets/GFS/GFS.Q.N.DE.W0.S13.S1.C.L.LE.GD.T._Z.XDC_R_B1GQ_CY._T.F.V.N._T
 def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig = go.Figure()
-    for country, label in [('sl', 'Sri Lanka'), ('de', 'Germany')]:
+    hovertemplate = (
+        "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
+        "Year: %{x}<br>"
+        "GDP per capita: %{customdata[2]:,.0f} US$<br>"  # Added thousands separator
+        "GDP: %{customdata[3]:,.0f} billion US$<br>"
+        "Government debt: %{customdata[4]:.1f}% of GDP<br>"
+        "Industry: +%{customdata[5]:.1f}% of GDP<br>"
+        "Agriculture: +%{customdata[6]:.1f}% of GDP<br>"
+        "Services: +%{customdata[7]:.1f}% of GDP<br>"
+        "Military expenditure: -%{customdata[8]:.2f}% of GDP<br>"
+        "<extra></extra>"
+    ) # HTML
+
+    for country, df in [('Germany', data['de']), ('Sri Lanka', data['sl'])]:
         fig.add_trace(
             go.Scatter(
-                x=data['GDP'][country].index,
-                y=data['GDP'][country].values,
-                name=label,
-                hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>GDP per capita: $%{{y:,.0f}}<br><extra></extra>"
+                x=df.index,
+                y=df['GDP per capita (current US$)'],
+                line=dict(color=COLORS[country]),
+                customdata=np.column_stack((
+                    [country] * len(df),
+                    [COLORS[country]] * len(df),
+                    df['GDP per capita (current US$)'],
+                    df['GDP (billion US$)'],
+                    df['Central government debt, total (% of GDP)'],
+                    df['Industry (including construction), value added (% of GDP)'],
+                    df['Agriculture, forestry, and fishing, value added (% of GDP)'],
+                    df['Services, value added (% of GDP)'],
+                    df['Military expenditure (% of GDP)'],
+                )),
+                hovertemplate=hovertemplate
             )
         )
 
     fig.update_layout(
         title_text="GDP per capita",
-        yaxis=dict(range=[0, 50000]),
-        hovermode='x unified'
+        yaxis=dict(range=[0, 60000]),
+        # hovermode='x unified'
     )
 
     return fig
 
-
+# TODO: text to explain composition of happiness score
+# TODO: ask breunig about dotted line methodology change
 def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
-        "Year: %{x}<br>"
+        # "Year: %{x}<br>"
         "Rank: %{customdata[2]:.0f}<br>"
         "Happiness score: %{y:.2f}<br>"
-        "GDP per capita: %{customdata[3]:.3f}<br>"
-        "Social support: %{customdata[4]:.3f}<br>"
-        "Healthy life expectancy: %{customdata[5]:.3f}<br>"
-        "Freedom to make life choices: %{customdata[6]:.3f}<br>"
-        "Generosity: %{customdata[7]:.3f}<br>"
-        "Perceptions of corruption: %{customdata[8]:.3f}<br>"
-        "Dystopia + residual: %{customdata[9]:.3f}<br>"
+        "GDP per capita: +%{customdata[3]:.3f}<br>"
+        "Social support: +%{customdata[4]:.3f}<br>"
+        "Healthy life expectancy: +%{customdata[5]:.3f}<br>"
+        "Freedom to make life choices: +%{customdata[6]:.3f}<br>"
+        "Generosity: +%{customdata[7]:.3f}<br>"
+        "Perceptions of corruption: +%{customdata[8]:.3f}<br>"
+        "Dystopia + residual: +%{customdata[9]:.3f}<br>"
         "<extra></extra>"
     ) # HTML
 
-    COLORS = {'Germany': '#4DB6AC', 'Sri Lanka': '#FF7043'}
-    for country, data_df in [('Sri Lanka', data['happiness']['sl']), ('Germany', data['happiness']['de'])]:
+    for country, data_df in [('Germany', data['de']), ('Sri Lanka', data['sl'])]:
         # better data source starting from 2015
         for df in [data_df[data_df.index < 2015], data_df[data_df.index >= 2015]]:
             fig.add_trace(
@@ -179,7 +197,8 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
 
     fig.update_layout(
         title_text="Happiness Score",
-        yaxis=dict(range=[0, 10])
+        yaxis=dict(range=[0, 10]),
+        hovermode='x unified'
     )
 
     return fig
@@ -189,8 +208,8 @@ def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            x=data['tourism']['sl'].index,
-            y=data['tourism']['sl']['tourists arrived'],
+            x=data['sl'].index,
+            y=data['sl']['tourists arrived'],
             name='Sri Lanka',
             hovertemplate="<b>Sri Lanka</b><br>Year: %{x}<br>Tourists: %{y:,.0f}<br><extra></extra>"
         )
@@ -210,10 +229,10 @@ def plot_data(data: dict[str, dict[str, pd.DataFrame]]):
     row2_cols = st.columns(2)
 
     figs = [
-        plot_inflation_data(data),  # Top left
-        plot_GDP_data(data),        # Top right
-        plot_happiness_data(data),  # Bottom left
-        plot_tourism_data(data)     # Bottom right
+        plot_inflation_data(data['inflation']),  # Top left
+        plot_GDP_data(data['GDP']),        # Top right
+        plot_happiness_data(data['happiness']),  # Bottom left
+        plot_tourism_data(data['tourism'])     # Bottom right
     ]
 
     common_layout = dict(
