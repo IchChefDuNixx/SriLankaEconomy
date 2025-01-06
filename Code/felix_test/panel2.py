@@ -58,7 +58,7 @@ def load_data(
     return data
 
 
-def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]):
+def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     for country, label in [('sl', 'Sri Lanka'), ('de', 'Germany')]:
         fig.add_trace(
@@ -78,18 +78,18 @@ def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]):
 
     return fig
 
-def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]):
+def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
         # "Year: %{x}<br>"
-        "GDP per capita: %{customdata[2]:,.0f} US$<br>"
-        "GDP: %{customdata[3]:,.0f} billion US$<br>"
-        "Government Debt: %{customdata[4]:.1f}% of GDP<br>"
-        "Industry: %{customdata[5]:.1f}% of GDP<br>"
-        "Agriculture: %{customdata[6]:.1f}% of GDP<br>"
-        "Services: %{customdata[7]:.1f}% of GDP<br>"
-        "Military expenditure: %{customdata[8]:.2f}% of GDP<br>"
+        "GDP per capita: <b>%{customdata[2]:,.0f}</b> US$<br>"
+        "GDP: <b>%{customdata[3]:,.1f}</b> billion US$<br>"
+        "Gov. debt: <b>%{customdata[4]:.1f}%</b> of GDP<br>"
+        "Industry: <b>%{customdata[5]:.1f}%</b> of GDP<br>"
+        "Agriculture: <b>%{customdata[6]:.1f}%</b> of GDP<br>"
+        "Services: <b>%{customdata[7]:.1f}%</b> of GDP<br>"
+        "Military exp.: <b>%{customdata[8]:.2f}%</b> of GDP<br>"
         "<extra></extra>"
     ) # HTML
 
@@ -124,20 +124,21 @@ def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]):
 
 # TODO: text to explain composition of happiness score
 # TODO: ask breunig about dotted line methodology change
-def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
+def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
         "Year: %{x}<br>"
-        "Rank: %{customdata[2]:.0f}<br>"
-        "Happiness score: %{y:.2f}<br>"
-        "GDP per capita: +%{customdata[3]:.3f}<br>"
-        "Social support: +%{customdata[4]:.3f}<br>"
-        "Healthy life expectancy: +%{customdata[5]:.3f}<br>"
-        "Freedom to make life choices: +%{customdata[6]:.3f}<br>"
-        "Generosity: +%{customdata[7]:.3f}<br>"
-        "Perceptions of corruption: +%{customdata[8]:.3f}<br>"
-        "Dystopia + residual: +%{customdata[9]:.3f}<br>"
+        "Rank: #%{customdata[2]:.0f}<br>"
+        "Happiness Score: <b>%{y:.2f}</b><br><br>"
+        "Score Breakdown:<br>"
+        "GDP per capita: <b>+%{customdata[3]:.3f}</b><br>"
+        "Social support: <b>+%{customdata[4]:.3f}</b><br>"
+        "Healthy life expectancy: <b>+%{customdata[5]:.3f}</b><br>"
+        "Freedom to make life choices: <b>+%{customdata[6]:.3f}</b><br>"
+        "Generosity: <b>+%{customdata[7]:.3f}</b><br>"
+        "Perceptions of corruption: <b>+%{customdata[8]:.3f}</b><br>"
+        "Dystopia + residual: <b>+%{customdata[9]:.3f}</b><br>"
         "<extra></extra>"
     ) # HTML
 
@@ -165,6 +166,7 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
                 )
             )
 
+    # Missing data
     fig.add_vrect(
         x0=1999.1,
         x1=2004.5,
@@ -203,7 +205,7 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
     return fig
 
 
-def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]):
+def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
@@ -222,29 +224,41 @@ def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]):
     return fig
 
 
-def plot_data(data: dict[str, dict[str, pd.DataFrame]]):
-    st.title("Sri Lanka Indicators")
-    row1_cols = st.columns(2)
-    row2_cols = st.columns(2)
+def plot_data(data: dict[str, dict[str, pd.DataFrame]]) -> None:
+    st.title("Sri Lanka Indicators") # TODO: improve title
 
-    figs = [
-        plot_inflation_data(data['inflation']),  # Top left
-        plot_GDP_data(data['GDP']),        # Top right
-        plot_happiness_data(data['happiness']),  # Bottom left
-        plot_tourism_data(data['tourism'])     # Bottom right
-    ]
+    # Add time range selector at the top
+    year_range = st.slider(
+        "Select Time Period",
+        min_value=2000,
+        max_value=2024,
+        value=(2000, 2024)
+    )
 
+    # TODO: styling
     common_layout = dict(
         height=400,
-        xaxis=dict(range=[1999, 2025]),
+        # Extend range by 1 year on each side for better visualization
+        xaxis=dict(range=(year_range[0] - 1, year_range[1] + 1)),
         showlegend=False,
     )
 
+    # TODO: styling
     common_traces = dict(
         mode='lines+markers',
         line=dict(width=2),
         marker=dict(size=6)
     )
+
+    row1_cols = st.columns(2)
+    row2_cols = st.columns(2)
+
+    figs = [
+        plot_inflation_data(data['inflation']), # Top left
+        plot_GDP_data(data['GDP']),             # Top right
+        plot_happiness_data(data['happiness']), # Bottom left
+        plot_tourism_data(data['tourism'])      # Bottom right
+    ]
 
     for column, fig in zip(row1_cols + row2_cols, figs):
         fig.update_layout(**common_layout)
