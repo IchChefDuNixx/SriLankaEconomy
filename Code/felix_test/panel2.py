@@ -10,7 +10,7 @@ import streamlit as st
 # TODO: decide on styling (colors, marks, etc.)
 
 inflation_path = '../../data/inflation/results.csv'
-GDP_path = '../../data/nici stuff/gdp_de_sl.csv'
+GDP_path = '../../data/gdp/gdp_de_sl.csv'
 happiness_path = '../../data/happiness/results.csv'
 tourism_path = '../../data/tourism/sltda.csv'
 COLORS = {'Germany': '#4DB6AC', 'Sri Lanka': '#FF7043'}
@@ -78,19 +78,18 @@ def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]):
 
     return fig
 
-# TODO: https://data.ecb.europa.eu/data/datasets/GFS/GFS.Q.N.DE.W0.S13.S1.C.L.LE.GD.T._Z.XDC_R_B1GQ_CY._T.F.V.N._T
 def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
-        "Year: %{x}<br>"
-        "GDP per capita: %{customdata[2]:,.0f} US$<br>"  # Added thousands separator
+        # "Year: %{x}<br>"
+        "GDP per capita: %{customdata[2]:,.0f} US$<br>"
         "GDP: %{customdata[3]:,.0f} billion US$<br>"
-        "Government debt: %{customdata[4]:.1f}% of GDP<br>"
-        "Industry: +%{customdata[5]:.1f}% of GDP<br>"
-        "Agriculture: +%{customdata[6]:.1f}% of GDP<br>"
-        "Services: +%{customdata[7]:.1f}% of GDP<br>"
-        "Military expenditure: -%{customdata[8]:.2f}% of GDP<br>"
+        "Government Debt: %{customdata[4]:.1f}% of GDP<br>"
+        "Industry: %{customdata[5]:.1f}% of GDP<br>"
+        "Agriculture: %{customdata[6]:.1f}% of GDP<br>"
+        "Services: %{customdata[7]:.1f}% of GDP<br>"
+        "Military expenditure: %{customdata[8]:.2f}% of GDP<br>"
         "<extra></extra>"
     ) # HTML
 
@@ -105,7 +104,7 @@ def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]):
                     [COLORS[country]] * len(df),
                     df['GDP per capita (current US$)'],
                     df['GDP (billion US$)'],
-                    df['Central government debt, total (% of GDP)'],
+                    df['Government debt (% of GDP)'],
                     df['Industry (including construction), value added (% of GDP)'],
                     df['Agriculture, forestry, and fishing, value added (% of GDP)'],
                     df['Services, value added (% of GDP)'],
@@ -118,7 +117,7 @@ def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig.update_layout(
         title_text="GDP per capita",
         yaxis=dict(range=[0, 60000]),
-        # hovermode='x unified'
+        hovermode='x unified'
     )
 
     return fig
@@ -129,7 +128,7 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
-        # "Year: %{x}<br>"
+        "Year: %{x}<br>"
         "Rank: %{customdata[2]:.0f}<br>"
         "Happiness score: %{y:.2f}<br>"
         "GDP per capita: +%{customdata[3]:.3f}<br>"
@@ -198,7 +197,7 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]):
     fig.update_layout(
         title_text="Happiness Score",
         yaxis=dict(range=[0, 10]),
-        hovermode='x unified'
+        # hovermode='x unified'
     )
 
     return fig
