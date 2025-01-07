@@ -2,6 +2,10 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+# todo : hovering info
+# seperate graph for germany
+# ' should we change the graphs?'
+
 # Load the data
 data_file = 'srilanka/data/tourism/tourism_arrival_srilanka.csv'
 data = pd.read_csv(data_file)
