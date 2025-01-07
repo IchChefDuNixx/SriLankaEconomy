@@ -12,7 +12,7 @@ import streamlit as st
 inflation_path = '../../data/inflation/results.csv'
 GDP_path = '../../data/gdp/gdp_de_sl.csv'
 happiness_path = '../../data/happiness/results.csv'
-tourism_path = '../../data/tourism/sltda.csv'
+tourism_path = '../../data/tourism/tourism_de_sl.csv'
 COLORS = {'Germany': '#4DB6AC', 'Sri Lanka': '#FF7043'}
 
 
@@ -39,8 +39,10 @@ def load_happiness_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
 
 
 def load_tourism_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    df = pd.read_csv(path, index_col=[0])
-    return {"sl": df}
+    df = pd.read_csv(path, index_col=[0, 1])
+    sl = df.xs('Sri Lanka', level=1)
+    de = df.xs('Germany', level=1)
+    return {"sl": sl, "de": de}
 
 
 def load_data(
@@ -116,7 +118,7 @@ def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
 
     fig.update_layout(
         title_text="GDP per capita",
-        yaxis=dict(range=[0, 60000]),
+        yaxis=dict(range=[0, 61000]),
         hovermode='x unified'
     )
 
@@ -198,7 +200,7 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
 
     fig.update_layout(
         title_text="Happiness Score",
-        yaxis=dict(range=[0, 10]),
+        yaxis=dict(range=[0, 10]), # 10 or 10.5
         # hovermode='x unified'
     )
 
@@ -207,18 +209,30 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
 
 def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
-    fig.add_trace(
-        go.Scatter(
-            x=data['sl'].index,
-            y=data['sl']['tourists arrived'],
-            name='Sri Lanka',
-            hovertemplate="<b>Sri Lanka</b><br>Year: %{x}<br>Tourists: %{y:,.0f}<br><extra></extra>"
-        )
+    hovertemplate = (
+        "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
+        "Year: %{x}<br>"
+        "Tourists: <b>%{y:,.0f}</b><br>"
+        "<extra></extra>"
     )
 
+    for country, df in [('Germany', data['de']), ('Sri Lanka', data['sl'])]:
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=df['tourists arrived'],
+                line=dict(color=COLORS[country]),
+                customdata=np.column_stack((
+                    [country] * len(df),
+                    [COLORS[country]] * len(df),
+                )),
+                hovertemplate=hovertemplate
+            )
+        )
+
     fig.update_layout(
-        title_text="Tourism",
-        yaxis=dict(range=[0, 3e6])
+        title_text="Yearly Tourist Arrivals",
+        yaxis=dict(range=[0, 41e6])  # Removed fixed range to accommodate both countries
     )
 
     return fig
