@@ -1,84 +1,150 @@
-from os import PathLike
-
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-# TODO: load other data
-# TODO: https://plotly.com/python/range-slider/
-# TODO: decide on styling (colors, marks, etc.)
 
-inflation_path = '../../data/inflation/results.csv'
-GDP_path = '../../data/gdp/gdp_de_sl.csv'
-happiness_path = '../../data/happiness/results.csv'
-tourism_path = '../../data/tourism/tourism_de_sl.csv'
-COLORS = {'Germany': '#4DB6AC', 'Sri Lanka': '#FF7043'}
+COLORS = {'Inflation': '#FF7043',
+          'GDP': '#4DB6AC',
+          'Happiness': '#81C784',
+          'Tourism': '#7986CB',
+          'Germany': '#4DB6AC',
+          'Sri Lanka': '#FF7043'}
 
 
-def load_inflation_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    years = pd.date_range(start='2000', end='2025', freq='YE').strftime('%Y')
-    return {
-        "de": pd.Series(np.random.normal(2, 1, len(years)), index=years),
-        "sl": pd.Series(np.random.normal(6, 3, len(years)), index=years)
-    }
+def plot_panel1(data: dict[str, dict[str, pd.DataFrame]]) -> None:
+    st.title("Sri Lanka Indicators")
 
+    # TODO: fancy tooltips
+    # TODO: optimize ticks
+    # TODO: make modular/functions
 
-def load_GDP_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    df = pd.read_csv(path, index_col=[0, 1])
-    de = df.xs('Germany', level=1)
-    sl = df.xs('Sri Lanka', level=1)
-    return {"de": de, "sl": sl}
+    # Define specific years for the slider
+    year_options = [2000, 2004, 2009, 2018, 2019, 2021, 2022, 2024]
+    selected_year = st.select_slider(
+        "Select Year Range",
+        options=year_options,
+        value=2000, # == starting value
+        format_func=lambda x: str(int(x))
+    )
 
+    # Filter data while handling missing values
+    all_years = np.arange(2000, 2025)
+    visible_years = all_years[all_years <= selected_year]
 
-def load_happiness_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    df = pd.read_csv(path, index_col=[0, 1])
-    de = df.xs('Germany', level=1)
-    sl = df.xs('Sri Lanka', level=1)
-    return {"de": de, "sl": sl}
+    inflation_filtered = data['inflation']['sl']['Inflation'].reindex(visible_years)
+    gdp_filtered = data['GDP']['sl']['GDP per capita (current US$)'].reindex(visible_years)
+    happiness_filtered = data['happiness']['sl']['Happiness score'].reindex(visible_years)
+    tourism_filtered = data['tourism']['sl']['tourists arrived'].reindex(visible_years)
 
+    common_traces = dict(
+        y=visible_years,
+        mode='lines+markers',
+        line=dict(width=2),
+        marker=dict(size=6)
+    )
 
-def load_tourism_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    df = pd.read_csv(path, index_col=[0, 1])
-    sl = df.xs('Sri Lanka', level=1)
-    de = df.xs('Germany', level=1)
-    return {"sl": sl, "de": de}
+    # plot data
+    fig = go.Figure()
 
+    for i, (data, name) in enumerate([
+        (inflation_filtered, 'Inflation'),
+        (gdp_filtered, 'GDP'),
+        (happiness_filtered, 'Happiness'),
+        (tourism_filtered, 'Tourism')
+    ], start=1):
+        fig.add_trace(
+            go.Scatter(
+                x=data,
+                xaxis=f"x{i}",  # Use different x-axis for each trace
+                line_color=COLORS[name],
+                **common_traces
+            )
+        )
 
-def load_data(
-    inflation_path: str | PathLike[str],
-    GDP_path: str | PathLike[str],
-    happiness_path: str | PathLike[str],
-    tourism_path: str | PathLike[str]
-) -> dict[str, dict[str, pd.DataFrame]]:
-    data = {
-        'inflation': load_inflation_data(inflation_path),
-        'GDP': load_GDP_data(GDP_path),
-        'happiness': load_happiness_data(happiness_path),
-        'tourism': load_tourism_data(tourism_path)
-    }
-    return data
+    # don't touch domain or side
+    fig.update_layout(
+        xaxis1=dict(
+            domain=[0, 0.25],
+            range=[0, 55],
+            title="Inflation (%)",
+            side="top"
+        ),
+        xaxis2=dict(
+            domain=[0.25, 0.5],
+            range=[0, 5100],
+            title="GDP per capita",
+            side="top"
+        ),
+        xaxis3=dict(
+            domain=[0.5, 0.75],
+            range=[0, 9],
+            title="Happiness Score",
+            side="top"
+        ),
+        xaxis4=dict(
+            domain=[0.75, 1],
+            range=[0, 2.5e6],
+            title="Yearly Tourist Arrivals",
+            side="top"
+        ),
+
+        # Reverse range and styling
+        yaxis=dict(range=[2025.1, 1999.8]),
+
+        showlegend=False,
+        hovermode="y unified",
+        height=600
+    )
+
+    # Add vertical lines between subplots
+    for x in [0.25, 0.5, 0.75]:
+        fig.add_vline(
+            x=x,
+            xref="paper",
+            line_dash="dot",
+            line_color="gray",
+            line_width=0.25
+        )
+
+    # render in streamlit
+    st.plotly_chart(fig)
 
 
 def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
-    for country, label in [('sl', 'Sri Lanka'), ('de', 'Germany')]:
+    hovertemplate = (
+        "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
+        "Year: %{x}<br>"
+        "Inflation: <b>%{y:.1f}%</b><br>"
+        "<extra></extra>"
+    )
+
+    # different order because sri lanka's line is above germany
+    # different order affects the tooltip order
+    # high inflation = bad whereas high gdp/happiness/tourism = good
+    for country, df in [('Sri Lanka', data['sl']), ('Germany', data['de'])]:
         fig.add_trace(
             go.Scatter(
-                x=data[country].index,
-                y=data[country].values,
-                name=label,
-                hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>Inflation: %{{y:.1f}}%<br><extra></extra>"
+                x=df.index,
+                y=df['Inflation'],
+                line=dict(color=COLORS[country]),
+                customdata=np.column_stack((
+                    [country] * len(df),
+                    [COLORS[country]] * len(df),
+                )),
+                hovertemplate=hovertemplate
             )
         )
 
     fig.update_layout(
         title_text="Inflation",
-        yaxis=dict(range=[0, 20]),
+        yaxis=dict(range=[0, 51]),
         hovermode='x unified'
     )
 
     return fig
+
 
 def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
@@ -134,13 +200,13 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
         "Rank: #%{customdata[2]:.0f}<br>"
         "Happiness Score: <b>%{y:.2f}</b><br><br>"
         "Score Breakdown:<br>"
-        "GDP per capita: <b>+%{customdata[3]:.3f}</b><br>"
-        "Social support: <b>+%{customdata[4]:.3f}</b><br>"
-        "Healthy life expectancy: <b>+%{customdata[5]:.3f}</b><br>"
-        "Freedom to make life choices: <b>+%{customdata[6]:.3f}</b><br>"
-        "Generosity: <b>+%{customdata[7]:.3f}</b><br>"
-        "Perceptions of corruption: <b>+%{customdata[8]:.3f}</b><br>"
-        "Dystopia + residual: <b>+%{customdata[9]:.3f}</b><br>"
+        "GDP per capita: <b>%{customdata[3]:.3f}</b><br>"
+        "Social support: <b>%{customdata[4]:.3f}</b><br>"
+        "Healthy life expectancy: <b>%{customdata[5]:.3f}</b><br>"
+        "Freedom to make life choices: <b>%{customdata[6]:.3f}</b><br>"
+        "Generosity: <b>%{customdata[7]:.3f}</b><br>"
+        "Perceptions of corruption: <b>%{customdata[8]:.3f}</b><br>"
+        "Dystopia + residual: <b>%{customdata[9]:.3f}</b><br>"
         "<extra></extra>"
     ) # HTML
 
@@ -188,7 +254,8 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig.add_vline(
         x=2014.5,
         line_dash="dot",
-        line_color="gray"
+        line_color="gray",
+        line_width=1
     )
 
     fig.add_annotation(
@@ -200,7 +267,7 @@ def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
 
     fig.update_layout(
         title_text="Happiness Score",
-        yaxis=dict(range=[0, 10]), # 10 or 10.5
+        yaxis=dict(range=[0, 10.05]), # 10 or 10.05
         # hovermode='x unified'
     )
 
@@ -238,8 +305,8 @@ def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     return fig
 
 
-def plot_data(data: dict[str, dict[str, pd.DataFrame]]) -> None:
-    st.title("Sri Lanka Indicators") # TODO: improve title
+def plot_panel2(data: dict[str, dict[str, pd.DataFrame]]) -> None:
+    st.title("Comparison Charts") # TODO: improve title
 
     # Add time range selector at the top
     year_range = st.slider(
@@ -279,7 +346,3 @@ def plot_data(data: dict[str, dict[str, pd.DataFrame]]) -> None:
         fig.update_traces(**common_traces)
         with column:
             st.plotly_chart(fig)
-
-
-data = load_data(inflation_path, GDP_path, happiness_path, tourism_path)
-plot_data(data)
