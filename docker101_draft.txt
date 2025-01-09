@@ -1,0 +1,5 @@
+docker build -t srilanka-vis .
+
+docker run -p 8501:8501 srilanka-vis
+
+http://localhost:8501
