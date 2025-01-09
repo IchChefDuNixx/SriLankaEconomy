@@ -1,6 +1,12 @@
-# Tourisits arrival 
+# Tourists arrival 
+
+files we use;
+- data/tourism/tourism_arrival_srilanka.csv
+- data/tourism/tourists_germany.csv
 
 Tourists arrival in Germany were taken from websites
+
+**tourists_germany.csv**
 
 [Tourists arrival till 2021](https://www.worlddata.info/europe/germany/tourism.php)
 
