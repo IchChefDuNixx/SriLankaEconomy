@@ -7,14 +7,14 @@ import pandas as pd
 
 # Define the data for the timeline
 events = [
-    {"Year": 2000, "Event": "Whats happening in Sri Lanka in 2000", "Description": "intro on how the country was."},
-    {"Year": 2004, "Event": "Tsunami", "Description": "Tsunami hit the island on 26th December 2004. 30000 people lost there lives and thousands were displaced. Infrastructure destroyed and fishing communities were wiped out. "},
-    {"Year": 2009, "Event": "Civil War Ended", "Description": "Sri Lanka suffered from civil war from 1983 till 2009. 18th may 2009 Sri Lanka declared victory, defeating the Liberation Tigers of Tamil Eelam(LTTE). "},
-    {"Year": 2018, "Event": "Tourism blooming", "Description": "Tourism at peak. Factors such as end of war had an effect on this. "},
+    {"Year": 2000, "Event": "Sri Lanka in 2000", "Description": "On going civil war against LTTE (Liberation Tigers of Tamil Eelam). LTTE is a tamil militant organization that wanted a seperate land for themselves."},
+    {"Year": 2004, "Event": "Tsunami", "Description": "Tsunami hit the island on 26th December 2004. 30000 people lost there lives and thousands were displaced. Infrastructure ogf the country was destroyed and fishing communities were wiped out. "},
+    {"Year": 2009, "Event": "Civil War Ended", "Description": "On 18th may 2009 Sri Lanka declared victory from the civil war, defeating the LTTE. Civil war in Sri Lanka lasted for 26 years. "},
+    {"Year": 2018, "Event": "Tourism blooming", "Description": "Tourism rised rapidly after 2009 as a result of end of war. Tourism was at peak in 2018. "},
     {"Year": 2019, "Event": "Terrorist attack (Easter Attack)", "Description": "Jihadist suicide bombers attack churches and luxury hotels on Easter Sunday (21st April 2019). More than 350 people were killed and hundreds were wounded. "},
-    {"Year": 2020, "Event": "COVID-19 Pandemic", "Description": "Lockdown was imposed for months in multiple occasions. Tourism came to a halt. Unemployment increased from 4.8% in 2019 to 5.5% in 2020. "},
+    {"Year": 2020, "Event": "COVID-19 Pandemic", "Description": "Lockdown was imposed for months in multiple occasions due to COVID-19 Pandemic. Tourism came to a halt. Unemployment increased from 4.8% in 2019 to 5.5% in 2020. "},
     {"Year": 2022, "Event": "Protests against the governance", "Description": "Protests lasts from 15th March 2022 to 14th November 2022. Main two reasons for the protests were High inflation and rapid rise in the cost of living, Authoritarianism, corruption and nepotism of the Rajapaksa family. "},
-    {"Year": 2024, "Event": "Current situation", "Description": "how is Sri Lanka doing."}
+    {"Year": 2024, "Event": "Current situation", "Description": "The political and economic situation has stabilized. Tourism increased form 0.7 million in 2022 to nearly 1.5 million in 2023. "}
 ]
 
 # Convert to DataFrame
