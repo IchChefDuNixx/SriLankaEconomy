@@ -1,49 +1,49 @@
 Year,Country,Inflation Value (%),Reason
-2000,Germany,1.3,"Stable Eurozone growth, rising oil prices"
-2001,Germany,2.0,"Global slowdown post-dot-com bubble"
-2002,Germany,1.4,"Euro introduction stabilizing prices"
-2003,Germany,1.0,"Eurozone slowdown and weak growth"
-2004,Germany,1.6,"Oil price rise and economic recovery"
-2005,Germany,1.6,"Labor market reforms (Hartz IV)"
-2006,Germany,1.6,"Export-driven economic recovery"
-2007,Germany,2.3,"Oil and food price hikes"
-2008,Germany,2.6,"Oil price peak before financial crisis"
-2009,Germany,0.3,"Global recession from financial crisis"
-2010,Germany,1.0,"Economic stabilization post-crisis"
-2011,Germany,2.2,"Higher energy prices, Eurozone recovery"
-2012,Germany,1.9,"Eurozone debt crisis effects"
-2013,Germany,1.5,"Slow economic growth in Germany"
-2014,Germany,1.0,"Falling global oil prices"
-2015,Germany,0.5,"Deflationary pressures, low energy prices"
-2016,Germany,0.5,"Energy prices stabilize"
+2000,Germany,2.0,"Stable Eurozone growth, rising oil prices"
+2001,Germany,1.9,Global slowdown post-dot-com bubble
+2002,Germany,1.4,Euro introduction stabilizing prices
+2003,Germany,1.0,Eurozone slowdown and weak growth
+2004,Germany,1.8,Oil price rise and economic recovery
+2005,Germany,1.6,Labor market reforms (Hartz IV)
+2006,Germany,1.8,Export-driven economic recovery
+2007,Germany,2.3,Oil and food price hikes
+2008,Germany,2.8,Oil price peak before financial crisis
+2009,Germany,0.3,Global recession from financial crisis
+2010,Germany,1.1,Economic stabilization post-crisis
+2011,Germany,2.1,"Higher energy prices, Eurozone recovery"
+2012,Germany,2.0,Eurozone debt crisis effects
+2013,Germany,1.5,Slow economic growth in Germany
+2014,Germany,0.8,Falling global oil prices
+2015,Germany,0.3,"Deflationary pressures, low energy prices"
+2016,Germany,0.5,Energy prices stabilize
 2017,Germany,1.5,"Higher energy prices, strong growth"
-2018,Germany,1.8,"Robust domestic demand, moderate oil prices"
-2019,Germany,1.4,"Global trade tensions slowing growth"
+2018,Germany,1.9,"Robust domestic demand, moderate oil prices"
+2019,Germany,1.4,Global trade tensions slowing growth
 2020,Germany,0.5,"COVID-19 pandemic, VAT reductions"
-2021,Germany,3.1,"Supply chain disruptions, energy price spikes"
-2022,Germany,6.9,"Ukraine war, energy crisis"
-2023,Germany,5.9,"Moderated energy prices, ECB rate hikes"
-2000,Sri Lanka,6.176,"High fiscal deficits during civil war"
-2001,Sri Lanka,14.158,"Recession due to war and instability"
-2002,Sri Lanka,9.551,"Peace talks reduced economic pressures"
-2003,Sri Lanka,6.314,"Improved economic conditions post-tsunami"
-2004,Sri Lanka,7.575,"Tsunami recovery costs, oil prices rise"
-2005,Sri Lanka,11.639,"Energy costs and post-tsunami recovery"
-2006,Sri Lanka,10.020,"Ongoing war, food and fuel price hikes"
-2007,Sri Lanka,15.842,"Oil price spikes and conflict spending"
-2008,Sri Lanka,22.564,"Global financial crisis and the ongoing civil war."
-2009,Sri Lanka,2.464,"Post-war reconstruction and food costs"
-2010,Sri Lanka,6.217,"Global commodity price rise"
-2011,Sri Lanka,6.716,"Currency depreciation, high import costs"
-2012,Sri Lanka,7.542,"Improved stability, tighter policies"
-2013,Sri Lanka,6.908,"Low oil prices, fiscal consolidation"
-2014,Sri Lanka,3.179,"Stable commodity prices, fiscal reforms"
-2015,Sri Lanka,3.768,"Drought-induced higher food prices"
-2016,Sri Lanka,3.958,"Severe drought increased dependency on imports"
-2017,Sri Lanka,7.704,"Agricultural recovery post-drought"
-2018,Sri Lanka,2.135,"Easter attacks disrupted supply chains"
-2019,Sri Lanka,3.528,"COVID-19 disruptions, supply shortages"
-2020,Sri Lanka,6.153,"COVID-19 disruptions, supply shortages"
-2021,Sri Lanka,7.014,"Currency depreciation, money printing"
-2022,Sri Lanka,49.721,"Economic crisis, food and fuel shortages"
-2023,Sri Lanka,16.541,"IMF reforms stabilized economy and currency"
+2021,Germany,3.2,"Supply chain disruptions, energy price spikes"
+2022,Germany,8.7,"Ukraine war, energy crisis"
+2023,Germany,6.0,"Moderated energy prices, ECB rate hikes"
+2000,Sri Lanka,6.2,High fiscal deficits during civil war
+2001,Sri Lanka,14.2,Recession due to war and instability
+2002,Sri Lanka,9.6,Peace talks reduced economic pressures
+2003,Sri Lanka,6.3,Improved economic conditions post-tsunami
+2004,Sri Lanka,7.6,"Tsunami recovery costs, oil prices rise"
+2005,Sri Lanka,11.6,Energy costs and post-tsunami recovery
+2006,Sri Lanka,10.0,"Ongoing war, food and fuel price hikes"
+2007,Sri Lanka,15.8,Oil price spikes and conflict spending
+2008,Sri Lanka,22.6,Global financial crisis and the ongoing civil war.
+2009,Sri Lanka,3.5,Post-war reconstruction and food costs
+2010,Sri Lanka,6.2,Global commodity price rise
+2011,Sri Lanka,6.7,"Currency depreciation, high import costs"
+2012,Sri Lanka,9.2,"Improved stability, tighter policies"
+2013,Sri Lanka,6.9,"Low oil prices, fiscal consolidation"
+2014,Sri Lanka,3.3,"Stable commodity prices, fiscal reforms"
+2015,Sri Lanka,0.9,Drought-induced higher food prices
+2016,Sri Lanka,4.0,Severe drought increased dependency on imports
+2017,Sri Lanka,7.7,Agricultural recovery post-drought
+2018,Sri Lanka,2.1,Easter attacks disrupted supply chains
+2019,Sri Lanka,4.3,"COVID-19 disruptions, supply shortages"
+2020,Sri Lanka,6.0,"COVID-19 disruptions, supply shortages"
+2021,Sri Lanka,9.9,"Currency depreciation, money printing"
+2022,Sri Lanka,45.0,"Economic crisis, food and fuel shortages"
+2023,Sri Lanka,12.0,IMF reforms stabilized economy and currency

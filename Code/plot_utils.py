@@ -4,18 +4,15 @@ import plotly.graph_objects as go
 import streamlit as st
 
 
-COLORS = {'good': '#34C759',
-          'bad': '#FF3737',
-          'neutral': '#808080',
-          'inflation': '#FF7043',
+COLORS = {'Inflation': '#FF7043',
           'GDP': '#4DB6AC',
-          'happiness': '#81C784',
-          'tourism': '#7986CB',
+          'Happiness': '#81C784',
+          'Tourism': '#7986CB',
           'Germany': '#4DB6AC',
           'Sri Lanka': '#FF7043'}
 
 
-def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, int | str]]) -> None:
+def plot_panel1(data: dict[str, dict[str, pd.DataFrame]]) -> None:
     st.title("Sri Lanka Indicators")
 
     # TODO: fancy tooltips
@@ -30,101 +27,40 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         value=2000, # == starting value
         format_func=lambda x: str(int(x))
     )
-    assert type(selected_year) == int # typ checking fix
-
 
     # Filter data while handling missing values
     all_years = np.arange(2000, 2025)
     visible_years = all_years[all_years <= selected_year]
 
-    # Display the selected event name and description
-    try:
-        # st.write(f"**Year:** {selected_year}")
-        st.write(f"**{sl_events[selected_year]["Event"]}**")
-        st.write(f"{sl_events[selected_year]["Description"]}")
-    except Exception as e:
-        st.write("Error loading event descriptions!")
-        st.write(e)
-
-    # inflation_filtered = data['inflation']['sl']['Inflation'].reindex(visible_years)
-    inflation_filtered = data['inflation']['sl']['Inflation Value (%)'].reindex(visible_years)
+    inflation_filtered = data['inflation']['sl']['Inflation'].reindex(visible_years)
     gdp_filtered = data['GDP']['sl']['GDP per capita (current US$)'].reindex(visible_years)
     happiness_filtered = data['happiness']['sl']['Happiness score'].reindex(visible_years)
     tourism_filtered = data['tourism']['sl']['tourists arrived'].reindex(visible_years)
 
-    g, b, n = COLORS["good"], COLORS["bad"], COLORS["neutral"]
-
-    color_highlights = {
-        "inflation": [
-            (2000, n),
-            (2004, n),
-            (2005, b),
-            (2006, n),
-            (2008, b),
-            (2009, g),
-            (2021, n),
-            (2022, b),
-            (2025, n)
-        ],
-        "GDP": [
-            (2000, n),
-            (2009, n),
-            (2011, g),
-            (2021, n),
-            (2022, b),
-            (2025, n),
-        ],
-        "happiness": [
-            (2000, n),
-            (2015, n),
-            (2018, g),
-            (2023, n),
-            (2025, b),
-        ],
-        "tourism": [
-            (2000, n),
-            (2009, n),
-            (2018, g),
-            (2021, b),
-            (2025, n),
-        ],
-    }
-
     common_traces = dict(
+        y=visible_years,
         mode='lines+markers',
         line=dict(width=2),
-        marker=dict(size=6),#, color=n),
-        hoverinfo="none", # TODO: would be nice to see the year (y-value without the line color inside the tooltip)
+        marker=dict(size=6)
     )
 
     # plot data
     fig = go.Figure()
 
-    for i, (filtered_data, metric) in enumerate([
-        (inflation_filtered, 'inflation'),
+    for i, (data, name) in enumerate([
+        (inflation_filtered, 'Inflation'),
         (gdp_filtered, 'GDP'),
-        (happiness_filtered, 'happiness'),
-        (tourism_filtered, 'tourism')
+        (happiness_filtered, 'Happiness'),
+        (tourism_filtered, 'Tourism')
     ], start=1):
-        for (start_year, prev_color), (end_year, color) in zip(color_highlights[metric], color_highlights[metric][1:]):
-            selection=filtered_data[(filtered_data.index >= start_year) & (filtered_data.index <= end_year)]
-
-            if metric == "inflation":
-                print((start_year, prev_color), (end_year, color), len(selection))
-
-            fig.add_trace(
-                go.Scatter(
-                    x=selection,
-                    y=selection.index,
-                    xaxis=f"x{i}",      # Use different x-axis for each metric
-                    line_color=color,   # if color != n else COLORS[metric],
-                    # only highlight markers inside sections >= 2 years
-                    marker_color=[n] + [color]*(len(selection) - 2) + [color if len(selection) > 1 else n],
-
-                    **common_traces,
-                )
+        fig.add_trace(
+            go.Scatter(
+                x=data,
+                xaxis=f"x{i}",  # Use different x-axis for each trace
+                line_color=COLORS[name],
+                **common_traces
             )
-
+        )
 
     # don't touch domain or side
     fig.update_layout(
@@ -175,13 +111,12 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     st.plotly_chart(fig)
 
 
-def plot_inflation_data(data: dict[str, pd.DataFrame]) -> go.Figure:
+def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
-        # "Year: %{x}<br>"
+        "Year: %{x}<br>"
         "Inflation: <b>%{y:.1f}%</b><br>"
-        "Reason: %{customdata[2]}<br>"
         "<extra></extra>"
     )
 
@@ -192,13 +127,11 @@ def plot_inflation_data(data: dict[str, pd.DataFrame]) -> go.Figure:
         fig.add_trace(
             go.Scatter(
                 x=df.index,
-                # y=df['Inflation'],
-                y=df['Inflation Value (%)'],
+                y=df['Inflation'],
                 line=dict(color=COLORS[country]),
                 customdata=np.column_stack((
                     [country] * len(df),
                     [COLORS[country]] * len(df),
-                    df['Reason']
                 )),
                 hovertemplate=hovertemplate
             )
@@ -213,7 +146,7 @@ def plot_inflation_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     return fig
 
 
-def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
+def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
@@ -259,7 +192,7 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
 # TODO: text to explain composition of happiness score
 # TODO: ask breunig about dotted line methodology change
-def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
+def plot_happiness_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
@@ -341,39 +274,32 @@ def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     return fig
 
 
-def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
+def plot_tourism_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
-        # "Year: %{x}<br>"
-        "Tourists per capita: <b>%{y:,.3f}</b><br>"
-        "Total Tourists: <b>%{customdata[2]:,.1f} million</b><br>"
-        "Population: <b>%{customdata[3]:,.1f} million</b><br>"
+        "Year: %{x}<br>"
+        "Tourists: <b>%{y:,.0f}</b><br>"
         "<extra></extra>"
     )
 
     for country, df in [('Germany', data['de']), ('Sri Lanka', data['sl'])]:
-        df['tourists_per_capita'] = df['tourists arrived'] / df['population']
-
         fig.add_trace(
             go.Scatter(
                 x=df.index,
-                y=df['tourists_per_capita'],
+                y=df['tourists arrived'],
                 line=dict(color=COLORS[country]),
                 customdata=np.column_stack((
                     [country] * len(df),
                     [COLORS[country]] * len(df),
-                    df["tourists arrived"] / 1e6,
-                    df["population"] / 1e6
                 )),
                 hovertemplate=hovertemplate
             )
         )
 
     fig.update_layout(
-        title_text="Yearly Tourist Arrivals per capita",
-        yaxis=dict(range=[0, 0.51]),
-        hovermode='x unified'
+        title_text="Yearly Tourist Arrivals",
+        yaxis=dict(range=[0, 41e6])  # Removed fixed range to accommodate both countries
     )
 
     return fig
@@ -416,7 +342,7 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]]) -> None:
     ]
 
     for column, fig in zip(row1_cols + row2_cols, figs):
-        fig.update_layout(**common_layout, overwrite=False)
-        fig.update_traces(**common_traces, overwrite=False)
+        fig.update_layout(**common_layout)
+        fig.update_traces(**common_traces)
         with column:
             st.plotly_chart(fig)

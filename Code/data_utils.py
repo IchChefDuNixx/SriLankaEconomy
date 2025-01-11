@@ -1,48 +1,32 @@
-import json
 from os import PathLike
 import pandas as pd
 
 
-def load_sl_events(path: str | PathLike[str]) -> dict[int, dict[str, int | str]]:
-    try:
-        with open(path, "r") as f:
-            data = json.load(f)
-
-        # Convert the keys to integers for convenience
-        data = {int(key): value for key, value in data.items()}
-        return data
-
-    except Exception as e:
-        print(e)
-        return {}
-
-
-# df.xs() may return a pd.Series and .to_frame() doesn't satisfy type checking for some reason
 def load_inflation_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    df = pd.read_csv(path, index_col=[0, 1])
-    de = pd.DataFrame(df.xs('Germany', level=1))
-    sl = pd.DataFrame(df.xs('Sri Lanka', level=1))
+    df = pd.read_csv(path, delimiter=';', index_col=0)
+    de = df[['Germany']].rename(columns={'Germany': 'Inflation'})
+    sl = df[['Sri_Lanka']].rename(columns={'Sri_Lanka': 'Inflation'})
     return {"de": de, "sl": sl}
 
 
 def load_GDP_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
     df = pd.read_csv(path, index_col=[0, 1])
-    de = pd.DataFrame(df.xs('Germany', level=1))
-    sl = pd.DataFrame(df.xs('Sri Lanka', level=1))
+    de = df.xs('Germany', level=1)
+    sl = df.xs('Sri Lanka', level=1)
     return {"de": de, "sl": sl}
 
 
 def load_happiness_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
     df = pd.read_csv(path, index_col=[0, 1])
-    de = pd.DataFrame(df.xs('Germany', level=1))
-    sl = pd.DataFrame(df.xs('Sri Lanka', level=1))
+    de = df.xs('Germany', level=1)
+    sl = df.xs('Sri Lanka', level=1)
     return {"de": de, "sl": sl}
 
 
 def load_tourism_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
     df = pd.read_csv(path, index_col=[0, 1])
-    de = pd.DataFrame(df.xs('Germany', level=1))
-    sl = pd.DataFrame(df.xs('Sri Lanka', level=1))
+    sl = df.xs('Sri Lanka', level=1)
+    de = df.xs('Germany', level=1)
     return {"sl": sl, "de": de}
 
 
