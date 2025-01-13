@@ -4,6 +4,13 @@ import plotly.graph_objects as go
 import streamlit as st
 
 
+st.set_page_config(
+    page_title="HIIII THIS IS THE BROWSER TAB NAME",
+    page_icon="🇱🇰",
+    layout='centered', # or wide
+    initial_sidebar_state="collapsed")
+
+
 COLORS = {'good': '#34C759',
           'bad': '#FF3737',
           'neutral': '#808080',
@@ -16,6 +23,10 @@ COLORS = {'good': '#34C759',
 
 
 def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, int | str]]) -> None:
+
+    # TODO introduction and how to use
+    # here (as function call?)
+
     st.title("Sri Lanka Indicators")
 
     # TODO: fancy tooltips
@@ -33,24 +44,29 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     assert type(selected_year) == int # typ checking fix
 
 
-    # Filter data while handling missing values
-    all_years = np.arange(2000, 2025)
-    visible_years = all_years[all_years <= selected_year]
-
     # Display the selected event name and description
     try:
-        # st.write(f"**Year:** {selected_year}")
-        st.write(f"**{sl_events[selected_year]["Event"]}**")
-        st.write(f"{sl_events[selected_year]["Description"]}")
+        with st.container(border=True, height=150):
+            # st.write(f"**Year:** {selected_year}")
+            st.page_link(
+                page=f"pages/PLACEHOLDER.py{'#'+sl_events[selected_year]["Event"] if False else ""}", # TODO: unfinished!
+                label=f"**{sl_events[selected_year]["Event"]}**" + " (THIS IS A BUTTON)")
+            st.write(f"{sl_events[selected_year]["Description"]}")
+
     except Exception as e:
         st.write("Error loading event descriptions!")
         st.write(e)
 
-    # inflation_filtered = data['inflation']['sl']['Inflation'].reindex(visible_years)
+
+    # Filter data while handling missing values
+    all_years = np.arange(2000, 2025)
+    visible_years = all_years[all_years <= selected_year]
+
     inflation_filtered = data['inflation']['sl']['Inflation Value (%)'].reindex(visible_years)
     gdp_filtered = data['GDP']['sl']['GDP per capita (current US$)'].reindex(visible_years)
     happiness_filtered = data['happiness']['sl']['Happiness score'].reindex(visible_years)
     tourism_filtered = data['tourism']['sl']['tourists arrived'].reindex(visible_years)
+
 
     g, b, n = COLORS["good"], COLORS["bad"], COLORS["neutral"]
 
@@ -106,11 +122,8 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         (happiness_filtered, 'happiness'),
         (tourism_filtered, 'tourism')
     ], start=1):
-        for (start_year, prev_color), (end_year, color) in zip(color_highlights[metric], color_highlights[metric][1:]):
+        for (start_year, _), (end_year, color) in zip(color_highlights[metric], color_highlights[metric][1:]):
             selection=filtered_data[(filtered_data.index >= start_year) & (filtered_data.index <= end_year)]
-
-            if metric == "inflation":
-                print((start_year, prev_color), (end_year, color), len(selection))
 
             fig.add_trace(
                 go.Scatter(
@@ -120,7 +133,6 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
                     line_color=color,   # if color != n else COLORS[metric],
                     # only highlight markers inside sections >= 2 years
                     marker_color=[n] + [color]*(len(selection) - 2) + [color if len(selection) > 1 else n],
-
                     **common_traces,
                 )
             )
@@ -172,7 +184,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         )
 
     # render in streamlit
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 
 def plot_inflation_data(data: dict[str, pd.DataFrame]) -> go.Figure:
@@ -257,7 +269,7 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
     return fig
 
-# TODO: text to explain composition of happiness score
+
 # TODO: ask breunig about dotted line methodology change
 def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     fig = go.Figure()
@@ -419,4 +431,4 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]]) -> None:
         fig.update_layout(**common_layout, overwrite=False)
         fig.update_traces(**common_traces, overwrite=False)
         with column:
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, use_container_width=True)
