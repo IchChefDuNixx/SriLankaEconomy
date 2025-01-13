@@ -1,5 +1,3 @@
-import os
-
 from os import PathLike
 
 import numpy as np
@@ -11,19 +9,19 @@ import streamlit as st
 # TODO: https://plotly.com/python/range-slider/
 # TODO: decide on styling (colors, marks, etc.)
 
-inflation_path = 'data/inflation/inflation_de_sl.csv'
-GDP_path = 'data/gdp/gdp_de_sl.csv'
-happiness_path = 'data/happiness/results_new.csv'
-tourism_path = 'data/tourism/tourism_de_sl.csv'
+inflation_path = 'srilanka/data/inflation/results.csv'
+GDP_path = 'srilanka/data/gdp/gdp_de_sl.csv'
+happiness_path = 'srilanka/data/happiness/results.csv'
+tourism_path = 'srilanka/data/tourism/tourism_de_sl.csv'
 COLORS = {'Germany': '#4DB6AC', 'Sri Lanka': '#FF7043'}
 
 
-
 def load_inflation_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
-    df = pd.read_csv(path, delimiter=';', index_col=0)
-    de = df[['Germany']].rename(columns={'Germany': 'Value'})  
-    sl = df[['Sri_Lanka']].rename(columns={'Sri_Lanka': 'Value'})  
-    return {"de": de, "sl": sl} 
+    years = pd.date_range(start='2000', end='2025', freq='YE').strftime('%Y')
+    return {
+        "de": pd.Series(np.random.normal(2, 1, len(years)), index=years),
+        "sl": pd.Series(np.random.normal(6, 3, len(years)), index=years)
+    }
 
 
 def load_GDP_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
@@ -62,16 +60,13 @@ def load_data(
     return data
 
 
-def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]], year_range: tuple[int, int]) -> go.Figure:
+def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
     for country, label in [('sl', 'Sri Lanka'), ('de', 'Germany')]:
-        # Filter the data based on the selected year range
-        country_data = data[country].loc[year_range[0]:year_range[1]]
-
         fig.add_trace(
             go.Scatter(
-                x=country_data.index,
-                y=country_data['Value'],
+                x=data[country].index,
+                y=data[country].values,
                 name=label,
                 hovertemplate=f"<b>{label}</b><br>Year: %{{x}}<br>Inflation: %{{y:.1f}}%<br><extra></extra>"
             )
@@ -84,7 +79,6 @@ def plot_inflation_data(data: dict[str, dict[str, pd.DataFrame]], year_range: tu
     )
 
     return fig
-
 
 def plot_GDP_data(data: dict[str, dict[str, pd.DataFrame]]) -> go.Figure:
     fig = go.Figure()
@@ -274,7 +268,7 @@ def plot_data(data: dict[str, dict[str, pd.DataFrame]]) -> None:
     row2_cols = st.columns(2)
 
     figs = [
-        plot_inflation_data(data['inflation'],(2000,2023)), # Top left
+        plot_inflation_data(data['inflation']), # Top left
         plot_GDP_data(data['GDP']),             # Top right
         plot_happiness_data(data['happiness']), # Bottom left
         plot_tourism_data(data['tourism'])      # Bottom right
