@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+import json
 
 
 st.set_page_config(
@@ -49,9 +50,9 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         with st.container(border=True, height=150):
             # st.write(f"**Year:** {selected_year}")
             st.page_link(
-                page=f"pages/PLACEHOLDER.py{'#'+sl_events[selected_year]["Event"] if False else ""}", # TODO: unfinished!
-                label=f"**{sl_events[selected_year]["Event"]}**" + " (THIS IS A BUTTON)")
-            st.write(f"{sl_events[selected_year]["Description"]}")
+                # page=f"pages/PLACEHOLDER.py{'#'+sl_events[selected_year]["Event"] if False else ""}", # TODO: unfinished!
+                label=f"**{sl_events[selected_year]['Event']}**" + " (THIS IS A BUTTON)")
+            st.write(f"{sl_events[selected_year]['Description']}")
 
     except Exception as e:
         st.write("Error loading event descriptions!")
@@ -390,8 +391,24 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
     return fig
 
+def load_plot_descriptions(file_path: str) -> dict[str, str]:
+    """
+    Load plot descriptions from a JSON file.
 
-def plot_panel2(data: dict[str, dict[str, pd.DataFrame]]) -> None:
+    Args:
+        file_path (str): Path to the JSON file.
+
+    Returns:
+        dict[str, str]: A dictionary with plot keys as keys and descriptions as values.
+    """
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        st.error(f"Error loading plot descriptions: {e}")
+        return {}
+
+def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_desc: dict[int, dict[str, str]]) -> None:
     st.title("Comparison Charts") # TODO: improve title
 
     # Add time range selector at the top
@@ -417,18 +434,67 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]]) -> None:
         marker=dict(size=6)
     )
 
-    row1_cols = st.columns(2)
-    row2_cols = st.columns(2)
+    # row1_cols = st.columns(2)
+    # row2_cols = st.columns(2)
 
-    figs = [
-        plot_inflation_data(data['inflation']), # Top left
-        plot_GDP_data(data['GDP']),             # Top right
-        plot_happiness_data(data['happiness']), # Bottom left
-        plot_tourism_data(data['tourism'])      # Bottom right
+    # figs = [
+    #     plot_inflation_data(data['inflation']), # Top left
+    #     plot_GDP_data(data['GDP']),             # Top right
+    #     plot_happiness_data(data['happiness']), # Bottom left
+    #     plot_tourism_data(data['tourism'])      # Bottom right
+    # ]
+
+    # for column, fig in zip(row1_cols + row2_cols, figs):
+    #     fig.update_layout(**common_layout, overwrite=False)
+    #     fig.update_traces(**common_traces, overwrite=False)
+    #     with column:
+    #         st.plotly_chart(fig, use_container_width=True)
+
+# List of plots and their corresponding keys
+    figs_and_keys = [
+        (plot_inflation_data(data['inflation']), "inflation"),
+        (plot_GDP_data(data['GDP']), "GDP"),
+        (plot_happiness_data(data['happiness']), "happiness"),
+        (plot_tourism_data(data['tourism']), "tourism")
     ]
 
-    for column, fig in zip(row1_cols + row2_cols, figs):
+    for fig, key in figs_and_keys:
+        col1, col2 = st.columns([2, 1])  # Column widths: 2/3 for plot, 1/3 for text
+
+        # Configure the plot
         fig.update_layout(**common_layout, overwrite=False)
         fig.update_traces(**common_traces, overwrite=False)
-        with column:
+
+        with col1:
             st.plotly_chart(fig, use_container_width=True)
+
+        with col2:
+            description = plot_desc.get(key, "Description not available")
+            st.write(f"**{key.capitalize()}**")
+            st.write(description)
+            
+            # st.write(plot_desc.get(plot_key, "Description not available"))
+            
+                # Display the selected event name and description
+            # try:
+            #     if plot_key in plot_desc:
+            #         description = plot_desc[plot_key]
+            #         with st.container():
+            #     # Display the description for the plot
+            #             st.write(f"**{plot_key.capitalize()} Plot Description**")
+            #             st.write(description)
+            #     else:
+            #         st.write(f"No description available for the {plot_key} plot.")
+            # except Exception as e:
+            #     st.write("Error loading plot description!")
+            #     st.write(e)
+
+            # Center-align the text description
+            # st.markdown(
+            #     f"""
+            #     <div style="text-align: center; font-size: 16px;">
+            #         {plot_descriptions[key]}
+            #     </div>
+            #     """,
+            #     unsafe_allow_html=True
+            # )
