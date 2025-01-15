@@ -6,7 +6,7 @@ import json
 
 
 st.set_page_config(
-    page_title="HIIII THIS IS THE BROWSER TAB NAME",
+    page_title="SRI LANKA'S JOURNEY: A comparative study with germany",
     page_icon="🇱🇰",
     layout='centered', # or wide
     initial_sidebar_state="collapsed")
@@ -25,8 +25,11 @@ COLORS = {'good': '#34C759',
 
 def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, int | str]]) -> None:
 
-    # TODO introduction and how to use
     # here (as function call?)
+    st.write("""
+    Here by moving through specific years using the timeline, 
+    we can see how events happened in these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
+    """)
 
     st.title("Sri Lanka Indicators")
 
