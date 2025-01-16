@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-import json
 
 
 st.set_page_config(
@@ -23,25 +22,19 @@ COLORS = {'good': '#34C759',
           'Sri Lanka': '#FF7043'}
 
 
-def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, int | str]]) -> None:
-
-    # here (as function call?)
-    st.write("""
-    Here by moving through specific years using the timeline, 
-    we can see how events happened in these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
-    """)
+def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, str]]) -> None:
 
     st.title("Sri Lanka Indicators")
 
-    # TODO: fancy tooltips
-    # TODO: optimize ticks
-    # TODO: make modular/functions
+    st.write("""
+    Here by moving through specific years using the timeline,
+    we can see how events happened in these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
+    """)
 
     # Define specific years for the slider
-    year_options = [2000, 2004, 2009, 2018, 2019, 2021, 2022, 2024]
     selected_year = st.select_slider(
         "Select Year Range",
-        options=year_options,
+        options=[2000, 2004, 2009, 2018, 2019, 2021, 2022, 2024],
         value=2000, # == starting value
         format_func=lambda x: str(int(x))
     )
@@ -52,10 +45,10 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     try:
         with st.container(border=True, height=150):
             # st.write(f"**Year:** {selected_year}")
-            st.page_link(
-                # page=f"pages/PLACEHOLDER.py{'#'+sl_events[selected_year]["Event"] if False else ""}", # TODO: unfinished!
-                label=f"**{sl_events[selected_year]['Event']}**" + " (THIS IS A BUTTON)")
-            st.write(f"{sl_events[selected_year]['Description']}")
+            selected_event = sl_events[selected_year]["Event"]
+            # syntax: [label](page_name#section-ID)
+            st.write(f"[**{selected_event}**](incidents#{selected_event.lower().replace(' ', '-')})")
+            st.write(f"{sl_events[selected_year]["Description"]}")
 
     except Exception as e:
         st.write("Error loading event descriptions!")
@@ -248,7 +241,7 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
         fig.add_trace(
             go.Scatter(
                 x=df.index,
-                y=df['GDP per capita (current US$)'],
+                y=df['GDP (billion US$) Annual Change (%)'],
                 line=dict(color=COLORS[country]),
                 customdata=np.column_stack((
                     [country] * len(df),
@@ -266,8 +259,8 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
         )
 
     fig.update_layout(
-        title_text="GDP per capita",
-        yaxis=dict(range=[0, 61000]),
+        title_text="GDP per capita (yearly change in %)",
+        yaxis=dict(range=[-21, 41]),
         hovermode='x unified'
     )
 
@@ -394,40 +387,15 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
     return fig
 
-def load_plot_descriptions(file_path: str) -> dict[str, str]:
-    """
-    Load plot descriptions from a JSON file.
 
-    Args:
-        file_path (str): Path to the JSON file.
-
-    Returns:
-        dict[str, str]: A dictionary with plot keys as keys and descriptions as values.
-    """
-    try:
-        with open(file_path, "r") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        st.error(f"Error loading plot descriptions: {e}")
-        return {}
-
-def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_desc: dict[int, dict[str, str]]) -> None:
+def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dict[str, str]) -> None:
     st.title("Comparison Charts") # TODO: improve title
 
-    # Add time range selector at the top
-    year_range = st.slider(
-        "Select Time Period",
-        min_value=2000,
-        max_value=2024,
-        value=(2000, 2024)
-    )
-
     # TODO: styling
+    # Common config for all plots
     common_layout = dict(
         height=400,
-        # Extend range by 1 year on each side for better visualization
-        xaxis=dict(range=(year_range[0] - 1, year_range[1] + 1)),
-        showlegend=False,
+        showlegend=False
     )
 
     # TODO: styling
@@ -437,31 +405,14 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_desc: dict[int, d
         marker=dict(size=6)
     )
 
-    # row1_cols = st.columns(2)
-    # row2_cols = st.columns(2)
+    figs = {
+        'inflation': plot_inflation_data(data['inflation']),
+        'GDP': plot_GDP_data(data['GDP']),
+        'happiness': plot_happiness_data(data['happiness']),
+        'tourism': plot_tourism_data(data['tourism'])
+    }
 
-    # figs = [
-    #     plot_inflation_data(data['inflation']), # Top left
-    #     plot_GDP_data(data['GDP']),             # Top right
-    #     plot_happiness_data(data['happiness']), # Bottom left
-    #     plot_tourism_data(data['tourism'])      # Bottom right
-    # ]
-
-    # for column, fig in zip(row1_cols + row2_cols, figs):
-    #     fig.update_layout(**common_layout, overwrite=False)
-    #     fig.update_traces(**common_traces, overwrite=False)
-    #     with column:
-    #         st.plotly_chart(fig, use_container_width=True)
-
-# List of plots and their corresponding keys
-    figs_and_keys = [
-        (plot_inflation_data(data['inflation']), "inflation"),
-        (plot_GDP_data(data['GDP']), "GDP"),
-        (plot_happiness_data(data['happiness']), "happiness"),
-        (plot_tourism_data(data['tourism']), "tourism")
-    ]
-
-    for fig, key in figs_and_keys:
+    for key, fig in figs.items():
         col1, col2 = st.columns([2, 1])  # Column widths: 2/3 for plot, 1/3 for text
 
         # Configure the plot
@@ -472,32 +423,16 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_desc: dict[int, d
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            description = plot_desc.get(key, "Description not available")
-            st.write(f"**{key.capitalize()}**")
-            st.write(description)
-            
-            # st.write(plot_desc.get(plot_key, "Description not available"))
-            
-                # Display the selected event name and description
-            # try:
-            #     if plot_key in plot_desc:
-            #         description = plot_desc[plot_key]
-            #         with st.container():
-            #     # Display the description for the plot
-            #             st.write(f"**{plot_key.capitalize()} Plot Description**")
-            #             st.write(description)
-            #     else:
-            #         st.write(f"No description available for the {plot_key} plot.")
-            # except Exception as e:
-            #     st.write("Error loading plot description!")
-            #     st.write(e)
+            st.write("<br><br><br>", unsafe_allow_html=True)
+            st.write(plot_descriptions.get(key, "Description not available"))
 
-            # Center-align the text description
-            # st.markdown(
-            #     f"""
-            #     <div style="text-align: center; font-size: 16px;">
-            #         {plot_descriptions[key]}
-            #     </div>
-            #     """,
-            #     unsafe_allow_html=True
-            # )
+    # add sidebar navigation
+    sidebar_items = [
+        ("title", "sri-lanka-s-journey-a-comparative-study-with-germany"),
+        ("intro", "introduction"),
+        ("panel1", "sri-lanka-indicators"),
+        ("panel2", "comparison-charts"),
+        ("outlook", "outlook")
+    ]
+    for label, section in sidebar_items:
+        st.sidebar.write(f"[{label}](#{section})")

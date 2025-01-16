@@ -1,7 +1,7 @@
 from pathlib import Path
-from data_utils import load_data, load_sl_events, load_plot_description
+from data_utils import load_data, load_sl_events, load_plot_descriptions
 from plot_utils import plot_panel1, plot_panel2
-from definitions import add_heading_and_intro
+from definitions import add_heading_and_intro, add_outlook
 
 
 # TODO: https://plotly.com/python/range-slider/
@@ -19,8 +19,9 @@ plot_description_path = data_dir / 'plot_descriptions.json'
 
 data = load_data(inflation_path, GDP_path, happiness_path, tourism_path)
 sl_events = load_sl_events(sl_events_path)
-plot_desc = load_plot_description(plot_description_path)
+plot_desc = load_plot_descriptions(plot_description_path)
 
 add_heading_and_intro()
 plot_panel1(data, sl_events)
 plot_panel2(data, plot_desc)
+add_outlook()

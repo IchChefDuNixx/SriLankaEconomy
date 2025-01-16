@@ -3,13 +3,28 @@ from os import PathLike
 import pandas as pd
 
 
-def load_sl_events(path: str | PathLike[str]) -> dict[int, dict[str, int | str]]:
+def load_sl_events(path: str | PathLike[str]) -> dict[int, dict[str, str]]:
     try:
         with open(path, "r") as f:
             data = json.load(f)
 
         # Convert the keys to integers for convenience
         data = {int(key): value for key, value in data.items()}
+        return data
+
+    except Exception as e:
+        print(e)
+        return {}
+
+
+def load_plot_descriptions(path: str | PathLike[str]) -> dict[str, str]:
+    """
+    loads the textual descriptions for the app's main body.
+    these descriptions will be displayed beside the charts to help users interpret them.
+    """
+    try:
+        with open(path, "r") as f:
+            data = json.load(f)
         return data
 
     except Exception as e:
@@ -45,32 +60,6 @@ def load_tourism_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
     sl = pd.DataFrame(df.xs('Sri Lanka', level=1))
     return {"sl": sl, "de": de}
 
-def load_plot_description(path: str | PathLike[str]) -> dict[int, dict[str, int | str]]:
-    try:
-        with open(path, "r") as f:
-            data = json.load(f)
-        
-        # Convert keys to integers where possible
-        converted_data = {}
-        for key, value in data.items():
-            try:
-                converted_data[int(key)] = value
-            except ValueError:
-                print(f"Skipping non-numeric key: {key}")
-
-        return converted_data
-
-    except Exception as e:
-        print(e)
-        return {}
-
-    #     # Convert the keys to integers for convenience
-    #     data = {int(key): value for key, value in data.items()}
-    #     return data
-
-    # except Exception as e:
-    #     print(e)
-    #     return {}
 
 def load_data(
     inflation_path: str | PathLike[str],
@@ -85,19 +74,3 @@ def load_data(
         'tourism': load_tourism_data(tourism_path)
     }
     return data
-
-
-    
-# def load_data(
-#     inflation_path: str | PathLike[str],
-#     GDP_path: str | PathLike[str],
-#     happiness_path: str | PathLike[str],
-#     tourism_path: str | PathLike[str]
-# ) -> dict[str, dict[str, pd.DataFrame]]:
-#     data = {
-#         'inflation': load_inflation_data(inflation_path),
-#         'GDP': load_GDP_data(GDP_path),
-#         'happiness': load_happiness_data(happiness_path),
-#         'tourism': load_tourism_data(tourism_path)
-#     }
-#     return data
