@@ -3,6 +3,17 @@ import pandas as pd
 import plotly.graph_objects as go
 from PIL import Image
 
+
+st.set_page_config(
+    page_title="HIIII THIS IS THE BROWSER TAB NAME",
+    page_icon="🇱🇰",
+    layout='centered', # or wide
+    initial_sidebar_state="expanded")
+
+for i in range(10):
+    st.sidebar.write(f"[a](#a)")
+
+
 # Displaying brief information about the 2004 tsunami
 st.title("Incidents in Sri Lanka and Germany")
 st.header("Tsunami 2004 in Sri Lanka")
@@ -15,7 +26,7 @@ st.markdown(info)
 
 # Displaying the map image
 st.header("Map of Sri Lanka with Affected Districts")
-map_path = "sri_lanka_districts.png"
+map_path = "pages/sri_lanka_districts.png"
 try:
     img = Image.open(map_path)
     st.image(img, caption="Sri Lanka District Map", use_column_width=True)
