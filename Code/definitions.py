@@ -46,13 +46,13 @@ def add_heading_and_intro() -> None:
     # Adding 2 images    
     with col2:
         st.image(
-            "srilanka/data/pictures/srilanka_ella.jpg",  
+            "data/pictures/srilanka_ella.jpg",
             caption="Sceneric Ella train ride in Sri Lanka",
             use_column_width=True
         )
         
         st.image(
-            "srilanka/data/pictures/srilanka_surf.jpg",
+            "data/pictures/srilanka_surf.jpg",
             caption="Surfing in Sri Lanka",
             use_column_width=True
         )
