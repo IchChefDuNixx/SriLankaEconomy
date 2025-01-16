@@ -27,9 +27,22 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     st.title("Sri Lanka Indicators")
 
     st.write("""
-    Here by moving through specific years using the timeline,
-    we can see how events happened in these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
+    Here by moving through specific years using the timeline, we can see how events happened in 
+    these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
     """)
+    
+    st.write("Using the timeline we can move to these years:")
+    st.markdown("""
+    <ul style='list-style-type: disc; padding-left: 40px; margin-top: 0; margin-bottom: 0;'>
+        <li style='margin-bottom: 0px;'>2004</li>
+        <li style='margin-bottom: 0px;'>2009</li>
+        <li style='margin-bottom: 0px;'>2018</li>
+        <li style='margin-bottom: 0px;'>2019</li>
+        <li style='margin-bottom: 0pxx;'>2021</li>
+        <li style='margin-bottom: 0px;'>2022</li>
+        <li style='margin-bottom: 0px;'>2024</li>
+    </ul>
+    """, unsafe_allow_html=True)
 
     # Define specific years for the slider
     selected_year = st.select_slider(
@@ -45,10 +58,10 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     try:
         with st.container(border=True, height=150):
             # st.write(f"**Year:** {selected_year}")
-            selected_event = sl_events[selected_year]["Event"]
+            selected_event = sl_events[selected_year]['Event']
             # syntax: [label](page_name#section-ID)
             st.write(f"[**{selected_event}**](incidents#{selected_event.lower().replace(' ', '-')})")
-            st.write(f"{sl_events[selected_year]["Description"]}")
+            st.write(f"{sl_events[selected_year]['Description']}")
 
     except Exception as e:
         st.write("Error loading event descriptions!")
