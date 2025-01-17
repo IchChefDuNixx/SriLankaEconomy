@@ -5,7 +5,7 @@ import streamlit as st
 
 
 st.set_page_config(
-    page_title="SRI LANKA'S JOURNEY: A comparative study with germany",
+    page_title="Sri Lanka's Journey: A comparative study with Germany",
     page_icon="🇱🇰",
     layout='centered', # or wide
     initial_sidebar_state="collapsed")
@@ -23,14 +23,13 @@ COLORS = {'good': '#34C759',
 
 
 def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, str]]) -> None:
-
     st.title("Sri Lanka Indicators")
 
     st.write("""
-    Here by moving through specific years using the timeline, we can see how events happened in 
+    Here by moving through specific years using the timeline, we can see how events happened in
     these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
     """)
-    
+
     st.write("Using the timeline we can move to these years:")
     st.markdown("""
     <ul style='list-style-type: disc; padding-left: 40px; margin-top: 0; margin-bottom: 0;'>
@@ -44,12 +43,14 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     </ul>
     """, unsafe_allow_html=True)
 
-    # Define specific years for the slider
+# Define specific years for the slider
+    year_options = [2000, 2004, 2009, 2018, 2019, 2021, 2022, 2024]
     selected_year = st.select_slider(
-        "Select Year Range",
-        options=[2000, 2004, 2009, 2018, 2019, 2021, 2022, 2024],
+        label="Select Year Range",
+        options=year_options,
         value=2000, # == starting value
-        format_func=lambda x: str(int(x))
+        help=f"You can choose from {year_options}",
+        label_visibility="visible"
     )
     assert type(selected_year) == int # typ checking fix
 

@@ -19,8 +19,8 @@ def load_sl_events(path: str | PathLike[str]) -> dict[int, dict[str, str]]:
 
 def load_plot_descriptions(path: str | PathLike[str]) -> dict[str, str]:
     """
-    loads the textual descriptions for the app's main body.
-    these descriptions will be displayed beside the charts to help users interpret them.
+    Loads textual descriptions for the app's main body.
+    These descriptions will be displayed beside the charts to help users interpret them.
     """
     try:
         with open(path, "r") as f:
