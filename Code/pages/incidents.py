@@ -21,18 +21,38 @@ geojson_dir = base_dir  # GeoJSON files are in the same folder as this script
 # Sidebar navigation
 st.sidebar.markdown("""
 ### Navigation
+- [Status Quo in Sri Lanka](#status-quo-in-sri-lanka)
 - [Tsunami 2004](#tsunami-2004-in-sri-lanka)
 - [Civil War](#sri-lankan-civil-war-2000-2009)
 - [2008/09 Financial Crisis](#200809-financial-crisis-in-germany)
 - [2015 Refugee Crisis](#2015-refugee-crisis-in-germany)
 - [2019 Easter Attacks](#2019-easter-attacks-in-sri-lanka)
+- [Tourism Boom](#tourism-boom-in-sri-lanka)
 - [COVID-19 Pandemic](#covid-19-pandemic)
 - [Economic Crisis](#economic-crisis-in-sri-lanka)
+- [Protests against the Government](#protests-against-the-government)
+- [Today](#today)
 """)
 
 # Title and Introduction
 st.title("Incidents in Sri Lanka and Germany")
 st.markdown("""Explore key historical incidents, their impact, and related interactive visualizations.""")
+
+# Status Quo in Sri Lanka section
+st.header("Status Quo in Sri Lanka")
+st.markdown("""
+In 2000, Sri Lanka's socio-economic situation was shaped by a mix of challenges and developments:
+
+**Civil War Impact:** The country was in the midst of a prolonged civil war between the government and the Liberation Tigers of Tamil Eelam (LTTE). This conflict had significant economic and social repercussions, including reduced foreign investment, limited economic growth, and high defense spending.
+
+**Economic Growth:** Despite the conflict, Sri Lanka maintained modest economic growth, driven by sectors like tea exports, textiles, and remittances from overseas workers. However, poverty and inequality remained significant issues, particularly in rural and war-affected areas.
+
+**Global Relationships:** Sri Lanka's economy was reliant on global trade, with exports such as tea, rubber, and garments being crucial. Economic ties with countries like the United States, Europe, and neighboring India were essential.
+
+**Political Climate:** The political landscape was polarized, with frequent changes in government and challenges in addressing corruption and governance. Efforts to negotiate peace with the LTTE often stalled, prolonging instability.
+
+In summary, Sri Lanka in 2000 was a nation with significant potential but was constrained by conflict, socio-economic inequality, and political instability.
+""")
 
 # Tsunami 2004 Section
 st.header("Tsunami 2004 in Sri Lanka")
@@ -50,7 +70,12 @@ try:
         lat="Latitude",
         lon="Longitude",
         hover_name="District",
-        hover_data=["Deaths", "Damage"],
+        hover_data={
+            "Deaths": True,
+            "Damage": True,
+            "Latitude": False,
+            "Longitude": False
+        },
         color_discrete_sequence=["red"],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
@@ -64,9 +89,6 @@ try:
     st.plotly_chart(tsunami_fig)
 except FileNotFoundError:
     st.error("Tsunami data file not found. Please ensure 'tsunami_data.csv' is located in the 'data/incidents/' directory.")
-
-
-
 
 # Civil War Section
 st.header("Sri Lankan Civil War (2000-2009)")
@@ -97,9 +119,11 @@ try:
             "Year": True,
             "Army Casualties": True,
             "LTTE Casualties": True,
-            "Civilian Casualties": True
+            "Civilian Casualties": True,
+            "Latitude": False,
+            "Longitude": False
         },
-        color_discrete_sequence=["blue"],
+        color_discrete_sequence=["red"],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -112,9 +136,6 @@ try:
     st.plotly_chart(civil_war_fig)
 except FileNotFoundError:
     st.error("Civil war data file not found. Please ensure 'civil_war_events_2000_2009.csv' is located in the 'data/incidents/' directory.")
-
-
-
 
 # 2008/09 Financial Crisis Section
 st.header("2008/09 Financial Crisis in Germany")
@@ -136,9 +157,11 @@ try:
             "2008 Unemployment Rate (%)": True,
             "2009 Unemployment Rate (%)": True,
             "2008 Industrial Output Change (%)": True,
-            "2009 Industrial Output Change (%)": True
+            "2009 Industrial Output Change (%)": True,
+            "Latitude": False,
+            "Longitude": False
         },
-        color_discrete_sequence=["darkred"],
+        color_discrete_sequence=["red"],
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
@@ -166,8 +189,8 @@ try:
         lat="Latitude",
         lon="Longitude",
         hover_name="State",
-        hover_data=["Refugees Accepted", "Cost (Million Euros)"],
-        color_discrete_sequence=["green"],
+        hover_data={"Refugees Accepted": True, "Cost (Million Euros)": True, "Latitude": False, "Longitude": False},
+        color_discrete_sequence=["red"],
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
@@ -180,6 +203,41 @@ try:
     st.plotly_chart(refugee_crisis_fig)
 except FileNotFoundError:
     st.error("Refugee crisis data file not found. Please ensure 'refugee_crisis_data.csv' is located in the 'data/incidents/' directory.")
+
+
+
+# Tourism Boom Section
+st.header("Tourism Boom in Sri Lanka")
+st.markdown("""
+Before the 2019 Easter Attacks, Sri Lanka experienced a tourism boom, with the country being recognized
+as a top travel destination. The tourism sector significantly contributed to foreign exchange earnings
+and employment opportunities, showcasing the country's cultural and natural attractions.
+""")
+
+try:
+    tourism_df = pd.read_csv(os.path.join(data_dir, "Tourism_Sri_Lanka_2016_2019.csv"))
+
+    tourism_fig = px.line(
+        tourism_df,
+        x="Year",
+        y="Arrivals_in_Millions",
+        title="Tourist Arrivals in Sri Lanka (2016-2019)",
+        markers=True,
+        line_shape="spline",
+        hover_data=["Revenue_in_Billions_USD"]
+    )
+    tourism_fig.update_traces(line_color="red")
+    tourism_fig.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Arrivals (in Millions)",
+        height=600,
+        width=900
+    )
+    st.plotly_chart(tourism_fig)
+except FileNotFoundError:
+    st.error("Tourism data file not found. Please ensure 'Tourism_Sri_Lanka_2016_2019.csv' is located in the 'data/incidents/' directory.")
+
+
 
 # 2019 Easter Attacks Section
 st.header("2019 Easter Attacks in Sri Lanka")
@@ -195,8 +253,8 @@ try:
         lat="Latitude",
         lon="Longitude",
         hover_name="Location",
-        hover_data=["Killed", "Injured", "Terrorists Killed"],
-        color_discrete_sequence=["orange"],
+        hover_data={"Killed": True, "Injured": True, "Terrorists Killed": True, "Latitude": False, "Longitude": False},
+        color_discrete_sequence=["red"],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -209,10 +267,6 @@ try:
     st.plotly_chart(easter_attacks_fig)
 except FileNotFoundError:
     st.error("Easter attacks data file not found. Please ensure 'easter_attacks_data.csv' is located in the 'data/incidents/' directory.")
-
-
-
-
 
 # COVID-19 Pandemic Section
 st.header("COVID-19 Pandemic")
@@ -282,7 +336,6 @@ try:
 except FileNotFoundError:
     st.error("COVID-19 data file not found. Please ensure 'covid_data.csv' is located in the 'data/incidents/' directory.")
 
-
 # Economic Crisis Section
 st.header("Economic Crisis in Sri Lanka")
 st.markdown("""
@@ -310,7 +363,7 @@ try:
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Debt to GDP Ratio (%)'],
         name="Debt to GDP Ratio (%)",
-        marker_color="green"
+        marker_color="purple"
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
@@ -320,10 +373,10 @@ try:
     ))
 
     fig.update_layout(
-        title="Sri Lanka Economic Crisis Indicators",
+        title="Economic Crisis Impact in Sri Lanka",
         barmode="group",
         xaxis_title="Year",
-        yaxis_title="Percentage",
+        yaxis_title="Values",
         height=800,
         width=1000,
         legend=dict(
@@ -334,8 +387,55 @@ try:
 except FileNotFoundError:
     st.error("Economic crisis data file not found. Please ensure 'economic_crisis_data.csv' is located in the 'data/incidents/' directory.")
 
+# Protests against the Government Section
+st.header("Protests against the Government")
+st.markdown("""
+Year of 2022 has witnessed significant protests against the Sri Lankan government, driven by economic hardships,
+social inequalities, and political dissatisfaction. These protests, often led by citizens from diverse backgrounds,
+have brought attention to critical issues such as corruption, inflation, and governance failures.
+
+**Major Protest Movements:**
+- In 2022, mass demonstrations erupted due to severe shortages of essential goods and skyrocketing inflation.
+- Youth-led movements highlighted the need for systemic reforms and accountability.
+
+**Impact:**
+These protests have resulted in notable political changes, including leadership transitions and increased calls for transparency
+and reform in governance.
+""")
+
+# Today Section
+st.header("Sri Lanka Today")
+st.markdown("""
+In 2025, Sri Lanka's socio-economic situation reflects a nation in recovery and transition:
+
+**Economic Stabilization and Growth:** Following a severe economic downturn in 2022, Sri Lanka's economy has shown signs of stabilization.
+The World Bank projects a growth rate of 4.4% for 2024, indicating a positive trajectory. This recovery is supported by declining inflation
+and a current account surplus, bolstered by increased remittances and a rebound in tourism.
+
+**Poverty and Inequality:** Despite economic improvements, poverty levels remain elevated. As of mid-2024, approximately 24.8% of the population
+lived below the poverty line, highlighting ongoing challenges in income inequality and labor market disparities.
+
+**Political Developments:** In September 2024, Anura Kumara Dissanayake, a Marxist lawmaker, was elected president, reflecting a public desire for
+change from traditional political elites. His administration faces the task of implementing economic reforms and managing international relationships
+to support the nation's recovery.
+
+**International Support and Debt Restructuring:** Sri Lanka continues to engage with international partners for financial assistance. China has expressed
+commitment to aiding Sri Lanka in achieving financial relief and debt sustainability. Additionally, the International Monetary Fund (IMF) approved the third review
+of Sri Lanka's $2.9 billion bailout, emphasizing the need for continued reforms and debt restructuring.
+
+**Social Initiatives:** The government has launched programs aimed at socio-economic transformation, such as the 'Clean Sri Lanka' initiative, which focuses
+on political, social, and economic reforms to foster long-term development.
+
+In summary, Sri Lanka in 2025 is navigating a path toward economic recovery and social reform, addressing persistent challenges while leveraging international
+partnerships and domestic initiatives to build a more resilient future.
+""")
+
+
+
 # Footer
 st.markdown("""
 ---
 This dashboard provides a comparative study of significant incidents in Sri Lanka and Germany.
 """)
+
+
