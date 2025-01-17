@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 
 
@@ -37,14 +38,16 @@ def add_heading_and_intro() -> None:
 
     # Adding 2 images
     with col2:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+
         st.image(
-            "data/pictures/srilanka_ella.jpg",
+            os.path.join(base_dir, "../data/pictures/srilanka_ella.jpg"),
             caption="Scenic Ella train ride in Sri Lanka",
             use_column_width=True
         )
 
         st.image(
-            "data/pictures/srilanka_surf.jpg",
+            os.path.join(base_dir, "../data/pictures/srilanka_surf.jpg"),
             caption="Surfing in Sri Lanka",
             use_column_width=True
         )
