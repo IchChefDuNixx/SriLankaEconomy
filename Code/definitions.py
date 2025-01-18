@@ -79,4 +79,9 @@ def add_summary() -> None:
     TODO: PUT OUTLOOK HERE
                 will do soon
     """)
-    st.write("Sri Lanka is very unstable and it is not possible to make predictions, even for the near future.")
+    st.write("Sri Lanka is seeing a rise in tourism now that the challenges of the COVID-19 pandemic have been resolved, "
+             "with visitors returning to enjoy the island's natural beauty, cultural heritage, and diverse attractions. "
+             "However, the nation remains in a state of political and economic instability due to "
+             "ongoing governmental transitions and unresolved issues. This political and economic instability makes "
+             "it hard to predict the country's near future. While tourism offers hope for"
+             " economic recovery, the broader challenges facing Sri Lanka continue to create an uncertain future.")
