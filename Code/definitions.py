@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 import streamlit as st
 
 
@@ -42,17 +43,13 @@ def add_heading_and_intro() -> None:
     with col1:
         # Add introductory text
         st.write("""
-        Sri Lanka, often referred to as the "Pearl of the Indian Ocean", is an island located in
-        South Asia. It is renowed for its rich history, vibrant culture, and stunning natural
-        beauty.
+        Sri Lanka, often referred to as the "Pearl of the Indian Ocean", is an island located in South Asia. It is renowned for its rich history, vibrant culture, and stunning natural beauty.
 
-        Being a developing country, Sri Lanka is heavily reliant on agriculture, manufacturing and services.
-        While the economy has shown resilience, it has also faced challenges, including fiscal deficits,
-        debt burdens, and external shocks.
+        Being a developing country, Sri Lanka is heavily reliant on agriculture, manufacturing, and services. While the economy has shown resilience, it has also faced challenges, including fiscal deficits, debt burdens, and external shocks.
 
-        Sri Lanka has experienced several pivotal events that have shaped its socio-economic landscape.
-        These incidents have had implications on various aspects of the nation, including its
-        inflation rates, Gross Domestic Product (GDP), tourism industry, and overall happiness of its citizens.
+        Sri Lanka has experienced several pivotal events that have shaped its socio-economic landscape. These incidents have had implications on various aspects of the nation, including its inflation rates, Gross Domestic Product (GDP), tourism industry, and overall happiness of its citizens.
+
+        This application will compare Sri Lanka to Germany, highlighting the similarities and differences between them and providing insights into their respective economic and social landscapes.
         """)
 
     # Adding 2 images
@@ -74,14 +71,44 @@ def add_heading_and_intro() -> None:
 
 def add_summary() -> None:
     st.header("Summary")
-    st.markdown("""
-    In summary,
-    TODO: PUT OUTLOOK HERE
-                will do soon
-    """)
-    st.write("Sri Lanka is seeing a rise in tourism now that the challenges of the COVID-19 pandemic have been resolved, "
-             "with visitors returning to enjoy the island's natural beauty, cultural heritage, and diverse attractions. "
-             "However, the nation remains in a state of political and economic instability due to "
-             "ongoing governmental transitions and unresolved issues. This political and economic instability makes "
-             "it hard to predict the country's near future. While tourism offers hope for"
-             " economic recovery, the broader challenges facing Sri Lanka continue to create an uncertain future.")
+
+    summary_text = """
+    Over the past 25 years, Sri Lanka has faced significant challenges, including the deadliest tsunami in human history. The country also suffered severely from the effects of coordinated terrorist attacks and the global COVID-19 pandemic. However, Sri Lanka has managed to end the civil war and experienced a period of continuous improvements from 2009 to 2018.
+    <br>
+    Germany encountered difficulties during the 2015 refugee crisis, which strained its social services and infrastructure. The outbreak of the Ukraine war lead to a significant rise in energy prices and economic uncertainty. The comparisons indicate that Germany maintains a more stable economy and a higher standard of living. Factors such as a stronger social safety net and higher average income contribute to the higher reported happiness.
+    <br>
+    Today, Sri Lanka is recovering from the pandemic, with tourism starting to pick up again and inflation remaining low. The government is implementing economic reforms and attracting foreign investment to stimulate growth and improve living standards.
+    """
+
+    # colorful country names
+    for country in ["Sri Lanka", "Germany"]:
+        summary_text = summary_text.replace(country, f'<font color="{COLORS[country]}">{country}</font>')
+
+    st.markdown(summary_text, unsafe_allow_html=True)
+
+    # a dataframe is very convenient for styling a table
+    reasons_to_stay = pd.DataFrame({
+        "Reasons to Stay in Sri Lanka": [
+            """
+            <ul>
+                <li>Rich culture and warm hospitality</li>
+                <li>Beautiful, very distinct landscape</li>
+                <li>Relatively low cost of living compared to Western countries</li>
+            </ul>
+            """
+        ],
+        "Reasons <u>not</u> to Stay in Sri Lanka": [
+            """
+            <ul>
+                <li>Limited job opportunities in certain industries</li>
+                <li>Generally high and fluctuating inflation</li>
+                <li>Unstable government and potential for social unrest</li>
+            </ul>
+            """
+        ],
+    })
+
+    df_style = reasons_to_stay.style.set_table_attributes('style="width:100%"').hide()
+    st.markdown(df_style.to_html(), unsafe_allow_html=True)
+
+    st.markdown("Despite its progress, <font color=#FF7043>Sri Lanka</font>  remains a country marked by instability and uncertainty, making it difficult to predict even its near future.", unsafe_allow_html=True)

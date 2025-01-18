@@ -17,11 +17,10 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     st.title("Sri Lanka Indicators")
 
     st.write("""
-    Here by moving through specific years using the timeline, we can see how events happened in
-    these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
+    By navigating the timeline through a select set of years, you can see which major events have occurred and their effects on inflation rates, GDP, tourism industry, and happiness of Sri Lanka's citizens.
     """)
 
-# Define specific years for the slider
+    # Define specific years for the slider
     year_options = [2000, 2004, 2009, 2018, 2019, 2020, 2021, 2022, 2024]
     selected_year = st.select_slider(
         label="Select Year Range",
@@ -35,13 +34,12 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
 
     # Display the selected event name and description
     try:
-        with st.container(border=True, height=220):
-            # st.write(f"**Year:** {selected_year}")
-            selected_event = sl_events[selected_year]['Event']
-            # syntax: [label](page_name#section-ID)
-            st.write(f"[**{selected_event}**](incidents#{selected_event.lower().replace(' ', '-')})")
-            st.write(f"{sl_events[selected_year]['Description']}")
-            st.write(f"{sl_events[selected_year]['Effect']}")
+        with st.container(border=True, height=200):
+            event_data = sl_events[selected_year]
+            # syntax: [label](page_name#section_id)
+            st.markdown(f"[{event_data["Name"]}](incidents#{event_data["Id"]})")
+            st.markdown(f"{event_data["Description"]}")
+            st.markdown(f"{event_data["Effect"]}")
 
     except Exception as e:
         st.write("Error loading event descriptions!")
@@ -243,7 +241,7 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
         # "Year: %{x}<br>"
-        "Change YoY <b>%{y:,.2f}%</b><br>"
+        "Change YoY: <b>%{y:.2f}%</b><br>"
         "GDP per capita: <b>%{customdata[2]:,.0f}</b> US$<br>"
         "GDP: <b>%{customdata[3]:,.1f}</b> billion US$<br>"
         "Gov. debt: <b>%{customdata[4]:.1f}%</b> of GDP<br>"
@@ -410,7 +408,7 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
 
 def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dict[str, str]) -> None:
-    st.title("Comparison Charts") # TODO: improve title
+    st.title("Comparison Charts")
 
     # TODO: styling
     # Common config for all plots
@@ -461,8 +459,7 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
 
     st.sidebar.markdown("""
     ### Navigation
-    - [Sri Lanka's Journey](#sri-lanka-s-journey-a-comparative-study-with-germany)
-    - [Introduction](#introduction)
+    - [Introduction](#sri-lanka-s-journey-a-comparative-study-with-germany)
     - [Sri Lanka indicators](#sri-lanka-indicators)
     - [Compare Sri Lanka & Germany](#comparison-charts)
     - [Summary](#summary)

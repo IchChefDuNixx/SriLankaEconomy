@@ -1,9 +1,12 @@
+import json
 import os
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+from data_utils import load_sl_events
 from definitions import COLORS
 
 
@@ -19,6 +22,7 @@ st.set_page_config(
 base_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.abspath(os.path.join(base_dir, "..", "..", "data", "incidents"))
 geojson_dir = base_dir  # GeoJSON files are in the same folder as this script
+sl_events = load_sl_events(os.path.join(base_dir, "..", "..", "data", "sl_events.json"))
 
 #Adjust to increase/decrease the dotsize for the shown maps
 map_dot_size = 12
@@ -26,25 +30,27 @@ map_dot_size = 12
 # Sidebar navigation
 st.sidebar.markdown("""
 ### Navigation
-- [Status Quo in Sri Lanka](#status-quo-in-sri-lanka)
-- [Tsunami 2004](#tsunami-2004-in-sri-lanka)
-- [Civil War](#sri-lankan-civil-war-2000-2009)
-- [2008/09 Financial Crisis](#2008-09-financial-crisis-in-germany)
-- [2015 Refugee Crisis](#2015-refugee-crisis-in-germany)
-- [Tourism Boom](#tourism-boom-in-sri-lanka)
-- [2019 Easter Attacks](#2019-easter-attacks-in-sri-lanka)
-- [COVID-19 Pandemic](#covid-19-pandemic)
-- [Economic Crisis](#economic-crisis-in-sri-lanka)
-- [Protests against the Government](#protests-against-the-government)
-- [Today](#sri-lanka-today)
+- [Status Quo in Sri Lanka](#status-quo)
+- [Tsunami 2004](#tsunami)
+- [Civil War](#civil-war)
+- [2008/09 Financial Crisis](#financial-crisis-germany)
+- [2015 Refugee Crisis](#refugee-crisis-germany)
+- [Tourism Boom](#tourism-boom)
+- [2019 Easter Attacks](#easter-attacks)
+- [COVID-19 Pandemic](#pandemic)
+- [Economic Crisis](#economic-crisis)
+- [Protests against the Government](#government-protests)
+- [Today](#today)
 """)
+
+
 
 # Title and Introduction
 st.title("Incidents in Sri Lanka and Germany")
 st.markdown("""Explore key historical incidents, their impact, and related interactive visualizations.""")
 
 # Status Quo in Sri Lanka section
-st.header("Status Quo in Sri Lanka")
+st.header("Status Quo in Sri Lanka", anchor=sl_events[2000]["Id"])
 st.markdown("""
 In 2000, Sri Lanka's socio-economic situation was shaped by a mix of challenges and developments:
 
@@ -60,7 +66,7 @@ In summary, Sri Lanka in 2000 was a nation with significant potential but was co
 """)
 
 # Tsunami 2004 Section
-st.header("Tsunami 2004 in Sri Lanka")
+st.header("Tsunami 2004 in Sri Lanka", anchor=sl_events[2004]["Id"])
 st.markdown("""
 The 2004 Indian Ocean tsunami was one of the deadliest natural disasters in history.
 It occurred on December 26, 2004, triggered by a 9.1-9.3 magnitude undersea earthquake.
@@ -82,7 +88,7 @@ try:
             "Longitude": False
         },
         color_discrete_sequence=[COLORS["Sri Lanka"]],
-        zoom=7,
+        zoom=6.8, # type: ignore
         center={"lat": 7.8731, "lon": 80.7718},
     )
     tsunami_fig.update_traces(marker=dict(size=map_dot_size))
@@ -97,7 +103,7 @@ except FileNotFoundError:
     st.error("Tsunami data file not found. Please ensure 'tsunami_data.csv' is located in the 'data/incidents/' directory.")
 
 # Civil War Section
-st.header("Sri Lankan Civil War (2000-2009)")
+st.header("Sri Lankan Civil War (2000-2009)", anchor=sl_events[2009]["Id"])
 st.markdown("""
 The Sri Lankan Civil War was a prolonged armed conflict between the government and the LTTE.
 It caused widespread destruction and loss of life, particularly in the Northern and Eastern provinces.
@@ -130,7 +136,7 @@ try:
             "Longitude": False
         },
         color_discrete_sequence=[COLORS["Sri Lanka"]],
-        zoom=7,
+        zoom=6.8, # type: ignore
         center={"lat": 7.8731, "lon": 80.7718},
     )
     civil_war_fig.update_traces(marker=dict(size=map_dot_size))
@@ -145,7 +151,7 @@ except FileNotFoundError:
     st.error("Civil war data file not found. Please ensure 'civil_war_events_2000_2009.csv' is located in the 'data/incidents/' directory.")
 
 # 2008/09 Financial Crisis Section
-st.header("2008/09 Financial Crisis in Germany")
+st.header("2008/09 Financial Crisis in Germany", anchor="financial-crisis-germany")
 st.markdown("""
 The 2008/09 financial crisis had a significant impact on Germany, Europe's largest economy.
 It caused a contraction in industrial output, increased unemployment, and higher government spending.
@@ -184,7 +190,7 @@ except FileNotFoundError:
     st.error("Financial crisis data file not found. Please ensure 'financial_crisis_data.csv' is located in the 'data/incidents/' directory.")
 
 # 2015 Refugee Crisis Section
-st.header("2015 Refugee Crisis in Germany")
+st.header("2015 Refugee Crisis in Germany", anchor="refugee-crisis-germany")
 st.markdown("""
 In 2015, Germany became a primary destination for refugees fleeing conflict, particularly from Syria, Afghanistan, and Iraq.
 The crisis placed significant strain on resources but highlighted Germany's humanitarian efforts.
@@ -216,7 +222,7 @@ except FileNotFoundError:
 
 
 # Tourism Boom Section
-st.header("Tourism Boom in Sri Lanka")
+st.header("Tourism Boom in Sri Lanka", anchor=sl_events[2018]["Id"])
 st.markdown("""
 Before the 2019 Easter Attacks, Sri Lanka experienced a tourism boom, with the country being recognized
 as a top travel destination. The tourism sector significantly contributed to foreign exchange earnings
@@ -254,7 +260,7 @@ except FileNotFoundError:
 
 
 # 2019 Easter Attacks Section
-st.header("2019 Easter Attacks in Sri Lanka")
+st.header("2019 Easter Attacks in Sri Lanka", anchor=sl_events[2019]["Id"])
 st.markdown("""
 The 2019 Easter attacks were a series of coordinated bombings targeting churches and hotels in Sri Lanka.
 These attacks resulted in significant loss of life and were among the deadliest in the country's history.
@@ -269,7 +275,7 @@ try:
         hover_name="Location",
         hover_data={"Killed": True, "Injured": True, "Terrorists Killed": True, "Latitude": False, "Longitude": False},
         color_discrete_sequence=[COLORS["Sri Lanka"]],
-        zoom=7,
+        zoom=6.8, # type: ignore
         center={"lat": 7.8731, "lon": 80.7718},
     )
     easter_attacks_fig.update_traces(marker=dict(size=map_dot_size))
@@ -284,7 +290,7 @@ except FileNotFoundError:
     st.error("Easter attacks data file not found. Please ensure 'easter_attacks_data.csv' is located in the 'data/incidents/' directory.")
 
 # COVID-19 Pandemic Section
-st.header("COVID-19 Pandemic")
+st.header("COVID-19 Pandemic", anchor=sl_events[2020]["Id"])
 st.markdown("""
 The COVID-19 pandemic had a profound impact globally, including in Germany and Sri Lanka.
 It caused waves of infections, significant fatalities, and widespread economic challenges.
@@ -355,7 +361,7 @@ except FileNotFoundError:
     st.error("COVID-19 data file not found. Please ensure 'covid_data.csv' is located in the 'data/incidents/' directory.")
 
 # Economic Crisis Section
-st.header("Economic Crisis in Sri Lanka")
+st.header("Economic Crisis in Sri Lanka", anchor=sl_events[2021]["Id"])
 st.markdown("""
 The Sri Lankan economic crisis, starting in 2019, is considered the worst since independence in 1948.
 It was marked by unsustainable debt, inflation, and shortages of essential goods.
@@ -406,7 +412,7 @@ except FileNotFoundError:
     st.error("Economic crisis data file not found. Please ensure 'economic_crisis_data.csv' is located in the 'data/incidents/' directory.")
 
 # Protests against the Government Section
-st.header("Protests against the Government")
+st.header("Protests against the Government", anchor=sl_events[2022]["Id"])
 st.markdown("""
 Year of 2022 has witnessed significant protests against the Sri Lankan government, driven by economic hardships,
 social inequalities, and political dissatisfaction. These protests, often led by citizens from diverse backgrounds,
@@ -422,7 +428,7 @@ and reform in governance.
 """)
 
 # Today Section
-st.header("Sri Lanka Today")
+st.header("Sri Lanka Today", anchor=sl_events[2024]["Id"])
 st.markdown("""
 In 2025, Sri Lanka's socio-economic situation reflects a nation in recovery and transition:
 

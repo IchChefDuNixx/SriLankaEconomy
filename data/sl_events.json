@@ -1,55 +1,64 @@
 {
     "2000": {
         "Year": "2000",
-        "Event": "Status quo in Sri Lanka",
+        "Name": "Status quo in Sri Lanka",
+        "Id": "status-quo",
         "Description": "Ongoing civil war against the LTTE (Liberation Tigers of Tamil Eelam), a Tamil militant organization that sought a separate land for themselves.",
         "Effect": "a"
     },
     "2004": {
         "Year": "2004",
-        "Event": "Tsunami",
+        "Name": "Tsunami",
+        "Id": "tsunami",
         "Description": "A tsunami hit the island on December 26, 2004. Around 30,000 people lost their lives, and thousands were displaced. The country's infrastructure was destroyed, and fishing communities were wiped out.",
         "Effect": "Inflation increased. Much of the rise was attributed to disruptions in economic activities and supply chains, and reconstruction costs."
     },
     "2009": {
         "Year": "2009",
-        "Event": "Civil War Ended",
+        "Name": "Civil War Ended",
+        "Id": "civil-war",
         "Description": "On May 18, 2009, Sri Lanka declared victory in the civil war, defeating the LTTE. The civil war in Sri Lanka lasted for 26 years.",
         "Effect": "Inflation dropped. The end of the war improved access to farmland, stabilizing food prices. Sri Lanka reduced war-related spending and received more foreign direct investments."
     },
     "2018": {
         "Year": "2018",
-        "Event": "Tourism boom",
+        "Name": "Tourism boom",
+        "Id": "tourism-boom",
         "Description": "Tourism rose rapidly after 2009 as a result of the end of the war. Tourism peaked in 2018.",
         "Effect": "Tourism drove GDP growth and increased reported happiness. Inflation remained stable."
     },
     "2019": {
         "Year": "2019",
-        "Event": "Terrorist attacks (Easter Attacks)",
+        "Name": "Terrorist attacks (Easter Attacks)",
+        "Id": "easter-attacks",
         "Description": "Jihadist suicide bombers attacked churches and luxury hotels on Easter Sunday (April 21, 2019). More than 350 people were killed, and hundreds were wounded.",
         "Effect": "This incident deterred tourists, causing a decline of 18% compared to the previous year."
     },
     "2020": {
         "Year": "2020",
-        "Event": "COVID-19 Pandemic",
+        "Name": "COVID-19 Pandemic",
+        "Id": "pandemic",
         "Description": "A lockdown was imposed for months on multiple occasions due to the COVID-19 pandemic. Tourism came to a halt, and unemployment increased from 4.8% in 2019 to 5.5% in 2020.",
         "Effect": "Inflation increased. This was affected by supply chain disruptions, rising energy costs, and money printing."
     },
     "2021": {
         "Year": "2021",
-        "Event": "Economic Crisis",
+        "Name": "Economic Crisis",
+        "Id": "economic-crisis",
         "Description": "Foreign debt surged to 119% of GDP, leaving the country unable to afford essentials like food, fuel, and medicine. Soaring prices and a depreciating rupee deepened the financial instability.",
         "Effect": "Tourism continued to decline. "
     },
     "2022": {
         "Year": "2022",
-        "Event": "Protests against the government",
+        "Name": "Protests against the government",
+        "Id": "government-protests",
         "Description": "Protests lasted from March 15, 2022, to November 14, 2022. The main reasons for the protests were high inflation, the rapid rise in the cost of living, authoritarianism, corruption, and nepotism of the Rajapaksa family.",
         "Effect": "GDP per capita experienced the biggest drop in a single year yet."
     },
     "2024": {
         "Year": "2024",
-        "Event": "Today",
+        "Name": "Today",
+        "Id": "today",
         "Description": "The political and economic situation has recovered. Tourism increased from 0.7 million in 2022 to nearly 1.5 million in 2023.",
         "Effect": "a"
     }
