@@ -30,21 +30,8 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     these years affected inflation rates, GDP, tourism industry, and happiness of its citizens.
     """)
 
-    st.write("Using the timeline we can move to these years:")
-    st.markdown("""
-    <ul style='list-style-type: disc; padding-left: 40px; margin-top: 0; margin-bottom: 0;'>
-        <li style='margin-bottom: 0px;'>2004</li>
-        <li style='margin-bottom: 0px;'>2009</li>
-        <li style='margin-bottom: 0px;'>2018</li>
-        <li style='margin-bottom: 0px;'>2019</li>
-        <li style='margin-bottom: 0pxx;'>2021</li>
-        <li style='margin-bottom: 0px;'>2022</li>
-        <li style='margin-bottom: 0px;'>2024</li>
-    </ul>
-    """, unsafe_allow_html=True)
-
 # Define specific years for the slider
-    year_options = [2000, 2004, 2009, 2018, 2019, 2021, 2022, 2024]
+    year_options = [2000, 2004, 2009, 2018, 2019, 2020, 2021, 2022, 2024]
     selected_year = st.select_slider(
         label="Select Year Range",
         options=year_options,
@@ -57,12 +44,13 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
 
     # Display the selected event name and description
     try:
-        with st.container(border=True, height=150):
+        with st.container(border=True, height=220):
             # st.write(f"**Year:** {selected_year}")
             selected_event = sl_events[selected_year]['Event']
             # syntax: [label](page_name#section-ID)
             st.write(f"[**{selected_event}**](incidents#{selected_event.lower().replace(' ', '-')})")
             st.write(f"{sl_events[selected_year]['Description']}")
+            st.write(f"{sl_events[selected_year]['Effect']}")
 
     except Exception as e:
         st.write("Error loading event descriptions!")
@@ -86,8 +74,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
             (2000, n),
             (2004, n),
             (2005, b),
-            (2006, n),
-            (2008, b),
+            (2008, n),
             (2009, g),
             (2021, n),
             (2022, b),
@@ -96,7 +83,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         "GDP": [
             (2000, n),
             (2009, n),
-            (2011, g),
+            (2018, g),
             (2021, n),
             (2022, b),
             (2025, n),
@@ -118,8 +105,8 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
     }
 
     common_traces = dict(
-        mode='lines+markers',
-        line=dict(width=2),
+        mode='lines', # hide markers
+        line=dict(width=3),
         marker=dict(size=6),#, color=n),
         hoverinfo="none", # TODO: would be nice to see the year (y-value without the line color inside the tooltip)
     )
@@ -148,6 +135,26 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
                 )
             )
 
+    if selected_year > 2000:
+        fig.add_shape(
+            type="rect",
+            xref="paper",
+            yref="y",
+            x0=0.5,  # Start of the happiness chart domain
+            x1=0.75,  # End of the happiness chart domain
+            y0=2000,  # Start of the y-range
+            y1=min(selected_year, 2005),  # End of the y-range
+            label=dict(
+                text="No Data",
+                textposition="middle center",
+                font=dict(size=14, color="gray")
+            ),
+            fillcolor="rgba(211, 211, 211, 0.2)",
+            opacity=0.4,
+            line_width=2,
+            line_dash="dash",
+            line_color="gray"
+        )
 
     # don't touch domain or side
     fig.update_layout(
@@ -223,7 +230,8 @@ def plot_inflation_data(data: dict[str, pd.DataFrame]) -> go.Figure:
                     [COLORS[country]] * len(df),
                     df['Reason']
                 )),
-                hovertemplate=hovertemplate
+                hovertemplate=hovertemplate,
+                name=country # legend label
             )
         )
 
@@ -241,6 +249,7 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
         # "Year: %{x}<br>"
+        "Change YoY <b>%{y:,.2f}%</b><br>"
         "GDP per capita: <b>%{customdata[2]:,.0f}</b> US$<br>"
         "GDP: <b>%{customdata[3]:,.1f}</b> billion US$<br>"
         "Gov. debt: <b>%{customdata[4]:.1f}%</b> of GDP<br>"
@@ -251,7 +260,8 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
         "<extra></extra>"
     ) # HTML
 
-    for country, df in [('Germany', data['de']), ('Sri Lanka', data['sl'])]:
+    # order, see explanation in plot_inflation_data()
+    for country, df in [('Sri Lanka', data['sl']), ('Germany', data['de'])]:
         fig.add_trace(
             go.Scatter(
                 x=df.index,
@@ -268,7 +278,8 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
                     df['Services, value added (% of GDP)'],
                     df['Military expenditure (% of GDP)'],
                 )),
-                hovertemplate=hovertemplate
+                hovertemplate=hovertemplate,
+                name=country
             )
         )
 
@@ -302,7 +313,7 @@ def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
     for country, data_df in [('Germany', data['de']), ('Sri Lanka', data['sl'])]:
         # better data source starting from 2015
-        for df in [data_df[data_df.index < 2015], data_df[data_df.index >= 2015]]:
+        for i, df in enumerate([data_df[data_df.index < 2015], data_df[data_df.index >= 2015]]):
             fig.add_trace(
                 go.Scatter(
                     x=df.index,
@@ -320,7 +331,9 @@ def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
                         df['Perceptions of corruption'],
                         df['Dystopia + residual']
                     )),
-                    hovertemplate=hovertemplate
+                    hovertemplate=hovertemplate,
+                    name=country,
+                    showlegend=(i == 0) # hide second identical legend label
                 )
             )
 
@@ -368,7 +381,6 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
         "<b style='color:%{customdata[1]}'>%{customdata[0]}</b><br>"
-        # "Year: %{x}<br>"
         "Tourists per capita: <b>%{y:,.3f}</b><br>"
         "Total Tourists: <b>%{customdata[2]:,.1f} million</b><br>"
         "Population: <b>%{customdata[3]:,.1f} million</b><br>"
@@ -389,7 +401,8 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
                     df["tourists arrived"] / 1e6,
                     df["population"] / 1e6
                 )),
-                hovertemplate=hovertemplate
+                hovertemplate=hovertemplate,
+                name=country
             )
         )
 
@@ -409,7 +422,13 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
     # Common config for all plots
     common_layout = dict(
         height=400,
-        showlegend=False
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            y=-0.2,
+            xanchor="center",
+            x=0.5
+        )
     )
 
     # TODO: styling
