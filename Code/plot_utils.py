@@ -3,23 +3,14 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from definitions import COLORS
+
 
 st.set_page_config(
     page_title="Sri Lanka's Journey: A comparative study with Germany",
     page_icon="🇱🇰",
     layout='centered', # or wide
     initial_sidebar_state="collapsed")
-
-
-COLORS = {'good': '#34C759',
-          'bad': '#FF3737',
-          'neutral': '#808080',
-          'inflation': '#FF7043',
-          'GDP': '#4DB6AC',
-          'happiness': '#81C784',
-          'tourism': '#7986CB',
-          'Germany': '#4DB6AC',
-          'Sri Lanka': '#FF7043'}
 
 
 def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, str]]) -> None:
@@ -126,7 +117,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
             fig.add_trace(
                 go.Scatter(
                     x=selection,
-                    y=selection.index,
+                    y=selection.index.to_series().apply(lambda x: f"{x}-01-01"),
                     xaxis=f"x{i}",      # Use different x-axis for each metric
                     line_color=color,   # if color != n else COLORS[metric],
                     # only highlight markers inside sections >= 2 years
@@ -142,8 +133,8 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
             yref="y",
             x0=0.5,  # Start of the happiness chart domain
             x1=0.75,  # End of the happiness chart domain
-            y0=2000,  # Start of the y-range
-            y1=min(selected_year, 2005),  # End of the y-range
+            y0=pd.Timestamp("2000-02-01"),  # Start of the y-range
+            y1=pd.Timestamp(f"{min(selected_year, 2005)}-01-01"),  # End of the y-range
             label=dict(
                 text="No Data",
                 textposition="middle center",
@@ -182,10 +173,13 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
             title="Yearly Tourist Arrivals",
             side="top"
         ),
-
         # Reverse range and styling
-        yaxis=dict(range=[2025.1, 1999.8]),
-
+        yaxis=dict(
+            range=[
+                pd.Timestamp("2025-02-01"),
+                pd.Timestamp("2000-01-01"),
+            ]
+        ),
         showlegend=False,
         hovermode="y unified",
         height=600
@@ -221,8 +215,8 @@ def plot_inflation_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     for country, df in [('Sri Lanka', data['sl']), ('Germany', data['de'])]:
         fig.add_trace(
             go.Scatter(
-                x=df.index,
-                # y=df['Inflation'],
+                # pd.to_datetime(df.index) doesn't work here
+                x=df.index.to_series().apply(lambda x: f"{x}-01-01"),
                 y=df['Inflation Value (%)'],
                 line=dict(color=COLORS[country]),
                 customdata=np.column_stack((
@@ -264,7 +258,7 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     for country, df in [('Sri Lanka', data['sl']), ('Germany', data['de'])]:
         fig.add_trace(
             go.Scatter(
-                x=df.index,
+                x=df.index.to_series().apply(lambda x: f"{x}-01-01"),
                 y=df['GDP (billion US$) Annual Change (%)'],
                 line=dict(color=COLORS[country]),
                 customdata=np.column_stack((
@@ -316,7 +310,7 @@ def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
         for i, df in enumerate([data_df[data_df.index < 2015], data_df[data_df.index >= 2015]]):
             fig.add_trace(
                 go.Scatter(
-                    x=df.index,
+                    x=df.index.to_series().apply(lambda x: f"{x}-01-01"),
                     y=df['Happiness score'],
                     line=dict(color=COLORS[country]),
                     customdata=np.column_stack((
@@ -339,8 +333,8 @@ def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
     # Missing data
     fig.add_vrect(
-        x0=1999.1,
-        x1=2004.5,
+        x0=pd.Timestamp('2000-02-01'),
+        x1=pd.Timestamp('2004-06-30'),
         label=dict(
             text="No Data",
             textposition="middle center",
@@ -355,14 +349,14 @@ def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
     # better data source starting from 2015
     fig.add_vline(
-        x=2014.5,
+        x=pd.Timestamp('2014-06-30'),
         line_dash="dot",
         line_color="gray",
         line_width=1
     )
 
     fig.add_annotation(
-        x=2014.5,
+        x=pd.Timestamp('2014-06-30'),
         y=10,
         text="Methodology change",
         showarrow=False
@@ -392,7 +386,7 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
         fig.add_trace(
             go.Scatter(
-                x=df.index,
+                x=df.index.to_series().apply(lambda x: f"{x}-01-01"),
                 y=df['tourists_per_capita'],
                 line=dict(color=COLORS[country]),
                 customdata=np.column_stack((
@@ -428,7 +422,13 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
             y=-0.2,
             xanchor="center",
             x=0.5
-        )
+        ),
+        xaxis=dict(
+            range=[
+                pd.Timestamp("2000-01-01"),
+                pd.Timestamp("2025-01-01"),
+            ]),
+        yaxis=dict(),
     )
 
     # TODO: styling
@@ -459,13 +459,11 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
             st.write("<br><br><br>", unsafe_allow_html=True)
             st.write(plot_descriptions.get(key, "Description not available"))
 
-    # add sidebar navigation
-    sidebar_items = [
-        ("Sri Lankas Journey", "sri-lanka-s-journey-a-comparative-study-with-germany"),
-        ("Introduction", "introduction"),
-        ("Sri Lanka indicators", "sri-lanka-indicators"),
-        ("Compare Sri Lanka & Germany", "comparison-charts"),
-        ("Summary", "outlook")
-    ]
-    for label, section in sidebar_items:
-        st.sidebar.write(f"[{label}](#{section})")
+    st.sidebar.markdown("""
+    ### Navigation
+    - [Sri Lanka's Journey](#sri-lanka-s-journey-a-comparative-study-with-germany)
+    - [Introduction](#introduction)
+    - [Sri Lanka indicators](#sri-lanka-indicators)
+    - [Compare Sri Lanka & Germany](#comparison-charts)
+    - [Summary](#summary)
+    """)

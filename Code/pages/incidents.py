@@ -1,9 +1,11 @@
-import streamlit as st
-import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
-import json
 import os
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import streamlit as st
+
+from definitions import COLORS
+
 
 # Page configuration
 st.set_page_config(
@@ -24,14 +26,14 @@ st.sidebar.markdown("""
 - [Status Quo in Sri Lanka](#status-quo-in-sri-lanka)
 - [Tsunami 2004](#tsunami-2004-in-sri-lanka)
 - [Civil War](#sri-lankan-civil-war-2000-2009)
-- [2008/09 Financial Crisis](#200809-financial-crisis-in-germany)
+- [2008/09 Financial Crisis](#2008-09-financial-crisis-in-germany)
 - [2015 Refugee Crisis](#2015-refugee-crisis-in-germany)
-- [2019 Easter Attacks](#2019-easter-attacks-in-sri-lanka)
 - [Tourism Boom](#tourism-boom-in-sri-lanka)
+- [2019 Easter Attacks](#2019-easter-attacks-in-sri-lanka)
 - [COVID-19 Pandemic](#covid-19-pandemic)
 - [Economic Crisis](#economic-crisis-in-sri-lanka)
 - [Protests against the Government](#protests-against-the-government)
-- [Today](#today)
+- [Today](#sri-lanka-today)
 """)
 
 # Title and Introduction
@@ -76,7 +78,7 @@ try:
             "Latitude": False,
             "Longitude": False
         },
-        color_discrete_sequence=["#FF7043"],
+        color_discrete_sequence=[COLORS["Sri Lanka"]],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -99,12 +101,12 @@ It caused widespread destruction and loss of life, particularly in the Northern 
 
 try:
     civil_war_df = pd.read_csv(os.path.join(data_dir, "civil_war_events_2000_2009.csv"))
-    
+
     # Explicitly cast numeric columns to object to allow 'N/A'
     numeric_columns = ["Army Casualties", "LTTE Casualties", "Civilian Casualties"]
     for col in numeric_columns:
         civil_war_df[col] = civil_war_df[col].astype(object)
-    
+
     civil_war_df.fillna("N/A", inplace=True)  # Replace empty values with 'N/A'
 
     selected_year = st.slider("Select a year to view events", 2000, 2009, 2000)
@@ -123,7 +125,7 @@ try:
             "Latitude": False,
             "Longitude": False
         },
-        color_discrete_sequence=["#FF7043"],
+        color_discrete_sequence=[COLORS["Sri Lanka"]],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -161,7 +163,7 @@ try:
             "Latitude": False,
             "Longitude": False
         },
-        color_discrete_sequence=["#4DB6AC"],
+        color_discrete_sequence=[COLORS["Germany"]],
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
@@ -190,7 +192,7 @@ try:
         lon="Longitude",
         hover_name="State",
         hover_data={"Refugees Accepted": True, "Cost (Million Euros)": True, "Latitude": False, "Longitude": False},
-        color_discrete_sequence=["#4DB6AC"],
+        color_discrete_sequence=[COLORS["Germany"]],
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
@@ -226,7 +228,7 @@ try:
         line_shape="spline",
         hover_data=["Revenue_in_Billions_USD"]
     )
-    tourism_fig.update_traces(line_color="#FF7043")
+    tourism_fig.update_traces(line_color=COLORS["Sri Lanka"])
     tourism_fig.update_layout(
         xaxis=dict(
             title="Year",
@@ -259,7 +261,7 @@ try:
         lon="Longitude",
         hover_name="Location",
         hover_data={"Killed": True, "Injured": True, "Terrorists Killed": True, "Latitude": False, "Longitude": False},
-        color_discrete_sequence=["#FF7043"],
+        color_discrete_sequence=[COLORS["Sri Lanka"]],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -292,45 +294,48 @@ try:
                 x=country_data['Year'],
                 y=country_data['Infections'],
                 name=f"{country} Infections",
-                marker_color="#4DB6AC"
+                marker_color=COLORS["Germany1"]
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Deaths'],
                 name=f"{country} Deaths",
-                marker_color="#26A69A"
+                marker_color=COLORS["Germany2"]
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Economic Loss (Billion USD)'],
                 name=f"{country} Economic Loss",
-                marker_color="#80CBC4"
+                marker_color=COLORS["Germany3"]
             ))
         else:
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Infections'],
                 name=f"{country} Infections",
-                marker_color="#FF7043"
+                marker_color=COLORS["Sri Lanka1"]
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Deaths'],
                 name=f"{country} Deaths",
-                marker_color="#FF8A65"
+                marker_color=COLORS["Sri Lanka3"]
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Economic Loss (Billion USD)'],
                 name=f"{country} Economic Loss",
-                marker_color="#FFAB91"
+                marker_color=COLORS["Sri Lanka4"]
             ))
 
     fig.update_layout(
         title="COVID-19 Impact in Germany and Sri Lanka",
         barmode="group",
         xaxis_title="Year",
-        yaxis_title="Values",
+        yaxis=dict(
+            title="Number of incidents",
+            type="log"
+        ),
         height=800,
         width=1000,
         legend=dict(
@@ -356,32 +361,32 @@ try:
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['GDP Growth (%)'],
         name="GDP Growth (%)",
-        marker_color="#FF7043"
+        marker_color=COLORS["Sri Lanka1"]
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Inflation (%)'],
         name="Inflation (%)",
-        marker_color="#FF6F41"
+        marker_color=COLORS["Sri Lanka2"]
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Debt to GDP Ratio (%)'],
         name="Debt to GDP Ratio (%)",
-        marker_color="#FF8A65"
+        marker_color=COLORS["Sri Lanka3"]
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Unemployment Rate (%)'],
         name="Unemployment Rate (%)",
-        marker_color="#FFAB91"
+        marker_color=COLORS["Sri Lanka4"]
     ))
 
     fig.update_layout(
         title="Economic Crisis Impact in Sri Lanka",
         barmode="group",
         xaxis_title="Year",
-        yaxis_title="Values",
+        yaxis_title="Percentage",
         height=800,
         width=1000,
         legend=dict(

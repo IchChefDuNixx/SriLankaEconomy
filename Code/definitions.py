@@ -2,6 +2,25 @@ import os
 import streamlit as st
 
 
+COLORS = {'good': '#34C759',
+          'bad': '#FF3737',
+          'neutral': '#808080',
+          'inflation': '#FF7043',
+          'GDP': '#4DB6AC',
+          'happiness': '#81C784',
+          'tourism': '#7986CB',
+          'Germany': '#4DB6AC',
+          'Germany1': '#4DB6AC', # same as Germany
+          'Germany2': '#26A69A',
+          'Germany3': '#80CBC4',
+          'Sri Lanka': '#FF7043',
+          'Sri Lanka1': '#FF7043', # same as Sri Lanka
+          'Sri Lanka2': '#FF6F41',
+          'Sri Lanka3': '#FF8A65',
+          'Sri Lanka4': '#FFAB91',
+}
+
+
 # main heading, intro
 def add_heading_and_intro() -> None:
     """
@@ -55,4 +74,9 @@ def add_heading_and_intro() -> None:
 
 def add_summary() -> None:
     st.header("Summary")
-    st.write("TODO: PUT OUTLOOK HERE")
+    st.markdown("""
+    In summary,
+    TODO: PUT OUTLOOK HERE
+                will do soon
+    """)
+    st.write("Sri Lanka is very unstable and it is not possible to make predictions, even for the near future.")
