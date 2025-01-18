@@ -20,6 +20,9 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.abspath(os.path.join(base_dir, "..", "..", "data", "incidents"))
 geojson_dir = base_dir  # GeoJSON files are in the same folder as this script
 
+#Adjust to increase/decrease the dotsize for the shown maps
+map_dot_size = 12
+
 # Sidebar navigation
 st.sidebar.markdown("""
 ### Navigation
@@ -82,6 +85,7 @@ try:
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
+    tsunami_fig.update_traces(marker=dict(size=map_dot_size))
     tsunami_fig.update_layout(
         mapbox_style="carto-positron",
         title="Sri Lanka Tsunami 2004 Affected Districts",
@@ -129,6 +133,7 @@ try:
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
+    civil_war_fig.update_traces(marker=dict(size=map_dot_size))
     civil_war_fig.update_layout(
         mapbox_style="carto-positron",
         title=f"Sri Lankan Civil War Events in {selected_year}",
@@ -167,6 +172,7 @@ try:
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
+    financial_crisis_fig.update_traces(marker=dict(size=map_dot_size))
     financial_crisis_fig.update_layout(
         mapbox_style="carto-positron",
         title="Germany 2008/09 Financial Crisis Impact",
@@ -196,6 +202,7 @@ try:
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
+    refugee_crisis_fig.update_traces(marker=dict(size=map_dot_size))
     refugee_crisis_fig.update_layout(
         mapbox_style="carto-positron",
         title="Germany Refugee Crisis Impact",
@@ -265,6 +272,7 @@ try:
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
+    easter_attacks_fig.update_traces(marker=dict(size=map_dot_size))
     easter_attacks_fig.update_layout(
         mapbox_style="carto-positron",
         title="Easter Attacks Locations",
