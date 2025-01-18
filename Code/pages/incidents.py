@@ -76,7 +76,7 @@ try:
             "Latitude": False,
             "Longitude": False
         },
-        color_discrete_sequence=["red"],
+        color_discrete_sequence=["#FF7043"],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -123,7 +123,7 @@ try:
             "Latitude": False,
             "Longitude": False
         },
-        color_discrete_sequence=["red"],
+        color_discrete_sequence=["#FF7043"],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -161,7 +161,7 @@ try:
             "Latitude": False,
             "Longitude": False
         },
-        color_discrete_sequence=["red"],
+        color_discrete_sequence=["#4DB6AC"],
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
@@ -190,7 +190,7 @@ try:
         lon="Longitude",
         hover_name="State",
         hover_data={"Refugees Accepted": True, "Cost (Million Euros)": True, "Latitude": False, "Longitude": False},
-        color_discrete_sequence=["red"],
+        color_discrete_sequence=["#4DB6AC"],
         zoom=5,
         center={"lat": 51.1657, "lon": 10.4515},
     )
@@ -226,9 +226,14 @@ try:
         line_shape="spline",
         hover_data=["Revenue_in_Billions_USD"]
     )
-    tourism_fig.update_traces(line_color="red")
+    tourism_fig.update_traces(line_color="#FF7043")
     tourism_fig.update_layout(
-        xaxis_title="Year",
+        xaxis=dict(
+            title="Year",
+            tickmode="linear",
+            tick0=2016,  # Start at 2016
+            dtick=1      # Increment by 1 to ensure integer ticks
+        ),
         yaxis_title="Arrivals (in Millions)",
         height=600,
         width=900
@@ -254,7 +259,7 @@ try:
         lon="Longitude",
         hover_name="Location",
         hover_data={"Killed": True, "Injured": True, "Terrorists Killed": True, "Latitude": False, "Longitude": False},
-        color_discrete_sequence=["red"],
+        color_discrete_sequence=["#FF7043"],
         zoom=7,
         center={"lat": 7.8731, "lon": 80.7718},
     )
@@ -287,38 +292,38 @@ try:
                 x=country_data['Year'],
                 y=country_data['Infections'],
                 name=f"{country} Infections",
-                marker_color="blue"
+                marker_color="#4DB6AC"
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Deaths'],
                 name=f"{country} Deaths",
-                marker_color="red"
+                marker_color="#26A69A"
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Economic Loss (Billion USD)'],
                 name=f"{country} Economic Loss",
-                marker_color="purple"
+                marker_color="#80CBC4"
             ))
         else:
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Infections'],
                 name=f"{country} Infections",
-                marker_color="green"
+                marker_color="#FF7043"
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Deaths'],
                 name=f"{country} Deaths",
-                marker_color="orange"
+                marker_color="#FF8A65"
             ))
             fig.add_trace(go.Bar(
                 x=country_data['Year'],
                 y=country_data['Economic Loss (Billion USD)'],
                 name=f"{country} Economic Loss",
-                marker_color="cyan"
+                marker_color="#FFAB91"
             ))
 
     fig.update_layout(
@@ -342,7 +347,7 @@ st.markdown("""
 The Sri Lankan economic crisis, starting in 2019, is considered the worst since independence in 1948.
 It was marked by unsustainable debt, inflation, and shortages of essential goods.
 """)
-
+#we maybe should use the same colouring as in the plot above for sri lanka based attributes right here this is just a suggestion
 try:
     economic_crisis_df = pd.read_csv(os.path.join(data_dir, "economic_crisis_data.csv"))
 
@@ -351,25 +356,25 @@ try:
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['GDP Growth (%)'],
         name="GDP Growth (%)",
-        marker_color="blue"
+        marker_color="#FF7043"
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Inflation (%)'],
         name="Inflation (%)",
-        marker_color="red"
+        marker_color="#FF6F41"
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Debt to GDP Ratio (%)'],
         name="Debt to GDP Ratio (%)",
-        marker_color="purple"
+        marker_color="#FF8A65"
     ))
     fig.add_trace(go.Bar(
         x=economic_crisis_df['Year'],
         y=economic_crisis_df['Unemployment Rate (%)'],
         name="Unemployment Rate (%)",
-        marker_color="orange"
+        marker_color="#FFAB91"
     ))
 
     fig.update_layout(

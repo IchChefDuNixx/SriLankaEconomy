@@ -461,11 +461,11 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
 
     # add sidebar navigation
     sidebar_items = [
-        ("title", "sri-lanka-s-journey-a-comparative-study-with-germany"),
-        ("intro", "introduction"),
-        ("panel1", "sri-lanka-indicators"),
-        ("panel2", "comparison-charts"),
-        ("outlook", "outlook")
+        ("Sri Lankas Journey", "sri-lanka-s-journey-a-comparative-study-with-germany"),
+        ("Introduction", "introduction"),
+        ("Sri Lanka indicators", "sri-lanka-indicators"),
+        ("Compare Sri Lanka & Germany", "comparison-charts"),
+        ("Summary", "outlook")
     ]
     for label, section in sidebar_items:
         st.sidebar.write(f"[{label}](#{section})")

@@ -53,6 +53,6 @@ def add_heading_and_intro() -> None:
         )
 
 
-def add_outlook() -> None:
-    st.header("Outlook")
+def add_summary() -> None:
+    st.header("Summary")
     st.write("TODO: PUT OUTLOOK HERE")
