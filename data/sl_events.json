@@ -4,7 +4,7 @@
         "Name": "Status quo in Sri Lanka",
         "Id": "status-quo",
         "Description": "Ongoing civil war against the LTTE (Liberation Tigers of Tamil Eelam), a Tamil militant organization that sought a separate land for themselves.",
-        "Effect": "a"
+        "Effect": " "
     },
     "2004": {
         "Year": "2004",
@@ -60,6 +60,6 @@
         "Name": "Today",
         "Id": "today",
         "Description": "The political and economic situation has recovered. Tourism increased from 0.7 million in 2022 to nearly 1.5 million in 2023.",
-        "Effect": "a"
+        "Effect": " "
     }
 }

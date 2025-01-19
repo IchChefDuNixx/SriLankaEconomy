@@ -70,7 +70,11 @@ def add_heading_and_intro() -> None:
 
 
 def add_summary() -> None:
-    st.header("Summary")
+    heading_colour = COLORS['Sri Lanka']
+    st.markdown(
+        f"<h1 style='color:{heading_colour};'>Summary</h1>",
+        unsafe_allow_html=True
+    )
 
     summary_text = """
     Over the past 25 years, Sri Lanka has faced significant challenges, including the deadliest tsunami in human history. The country also suffered severely from the effects of coordinated terrorist attacks and the global COVID-19 pandemic. However, Sri Lanka has managed to end the civil war and experienced a period of continuous improvements from 2009 to 2018.

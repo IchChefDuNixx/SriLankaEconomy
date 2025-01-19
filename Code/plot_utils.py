@@ -14,7 +14,13 @@ st.set_page_config(
 
 
 def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, str]]) -> None:
-    st.title("Sri Lanka Indicators")
+    heading_colour = COLORS['Sri Lanka']
+    
+    st.markdown(
+        f"<h1 style='color:{heading_colour};'>Affect on Sri Lanka according to incidents</h1>",
+        unsafe_allow_html=True
+    )
+    
 
     st.write("""
     By navigating the timeline through a select set of years, you can see which major events have occurred and their effects on inflation rates, GDP, tourism industry, and happiness of Sri Lanka's citizens.
@@ -37,9 +43,9 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         with st.container(border=True, height=200):
             event_data = sl_events[selected_year]
             # syntax: [label](page_name#section_id)
-            st.markdown(f"[{event_data["Name"]}](incidents#{event_data["Id"]})")
-            st.markdown(f"{event_data["Description"]}")
-            st.markdown(f"{event_data["Effect"]}")
+            st.markdown(f"[{event_data['Name']}](incidents#{event_data['Id']})")
+            st.markdown(f"{event_data['Description']}")
+            st.markdown(f"{event_data['Effect']}")
 
     except Exception as e:
         st.write("Error loading event descriptions!")
@@ -408,7 +414,12 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
 
 def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dict[str, str]) -> None:
-    st.title("Comparison Charts")
+    heading_colour = COLORS['Sri Lanka']
+    
+    st.markdown(
+        f"<h1 style='color:{heading_colour};'>Comparision between Sri Lanka and Germany</h1>",
+        unsafe_allow_html=True
+    )
 
     # TODO: styling
     # Common config for all plots
