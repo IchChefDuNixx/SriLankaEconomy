@@ -16,9 +16,9 @@ COLORS = {'good': '#34C759',
           'Germany3': '#80CBC4',
           'Sri Lanka': '#FF7043',
           'Sri Lanka1': '#FF7043', # same as Sri Lanka
-          'Sri Lanka2': '#FF6F41',
-          'Sri Lanka3': '#FF8A65',
-          'Sri Lanka4': '#FFAB91',
+          'Sri Lanka2': '#FF8767',
+          'Sri Lanka3': '#FFA183',
+          'Sri Lanka4': '#FFBBA7',
 }
 
 
