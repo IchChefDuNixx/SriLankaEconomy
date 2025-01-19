@@ -350,7 +350,7 @@ try:
         barmode="group",
         xaxis_title="Year",
         yaxis=dict(
-            title="Number of incidents",
+            title="Number of incidents (log scale)",
             type="log"
         ),
         height=800,
