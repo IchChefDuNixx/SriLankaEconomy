@@ -14,16 +14,13 @@ st.set_page_config(
 
 
 def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, dict[str, str]]) -> None:
-    heading_colour = COLORS['Sri Lanka']
-    
-    st.markdown(
-        f"<h1 style='color:{heading_colour};'>Affect on Sri Lanka according to incidents</h1>",
-        unsafe_allow_html=True
-    )
-    
+    st.markdown(f"""
+        <h1 style='color:{COLORS['Sri Lanka']};'>
+        Incidents That Shaped Sri Lanka</h1>
+        """, unsafe_allow_html=True)
 
     st.write("""
-    By navigating the timeline through a select set of years, you can see which major events have occurred and their effects on inflation rates, GDP, tourism industry, and happiness of Sri Lanka's citizens.
+        By navigating the timeline through a select set of years, you can see which major events have occurred and their effects on inflation rates, GDP, tourism industry, and happiness of Sri Lanka's citizens.
     """)
 
     # Define specific years for the slider
@@ -40,7 +37,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
 
     # Display the selected event name and description
     try:
-        with st.container(border=True, height=200):
+        with st.container(border=True, height=192):
             event_data = sl_events[selected_year]
             # syntax: [label](page_name#section_id)
             st.markdown(f"[{event_data['Name']}](incidents#{event_data['Id']})")
@@ -85,7 +82,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         ],
         "happiness": [
             (2000, n),
-            (2015, n),
+            (2010, n),
             (2018, g),
             (2023, n),
             (2025, b),
@@ -414,10 +411,8 @@ def plot_tourism_data(data: dict[str, pd.DataFrame]) -> go.Figure:
 
 
 def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dict[str, str]) -> None:
-    heading_colour = COLORS['Sri Lanka']
-    
     st.markdown(
-        f"<h1 style='color:{heading_colour};'>Comparision between Sri Lanka and Germany</h1>",
+        f"<h1 style='color:{COLORS['Sri Lanka']};'>Comparing Sri Lanka and Germany</h1>",
         unsafe_allow_html=True
     )
 
@@ -471,7 +466,7 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
     st.sidebar.markdown("""
     ### Navigation
     - [Introduction](#sri-lanka-s-journey-a-comparative-study-with-germany)
-    - [Sri Lanka indicators](#sri-lanka-indicators)
-    - [Compare Sri Lanka & Germany](#comparison-charts)
+    - [Incidents That Shaped Sri Lanka](#incidents-that-shaped-sri-lanka)
+    - [Comparing Sri Lanka & Germany](#comparing-sri-lanka-and-germany)
     - [Summary](#summary)
     """)

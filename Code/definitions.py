@@ -29,8 +29,8 @@ def add_heading_and_intro() -> None:
     """
     # Center-aligned title
     st.markdown(
-        """
-        <h1 style='text-align: center; color: #FF7043;'>
+        f"""
+        <h1 style='text-align: center; color: {COLORS["Sri Lanka"]};'>
             Sri Lanka's Journey:<br>A comparative Study with Germany
         </h1><br>
         """,
@@ -50,7 +50,7 @@ def add_heading_and_intro() -> None:
         Sri Lanka has experienced several pivotal events that have shaped its socio-economic landscape. These incidents have had implications on various aspects of the nation, including its inflation rates, Gross Domestic Product (GDP), tourism industry, and overall happiness of its citizens.
 
         This application will compare Sri Lanka to Germany, highlighting the similarities and differences between them and providing insights into their respective economic and social landscapes.
-        """)
+        """, unsafe_allow_html=True)
 
     # Adding 2 images
     with col2:
@@ -115,4 +115,6 @@ def add_summary() -> None:
     df_style = reasons_to_stay.style.set_table_attributes('style="width:100%"').hide()
     st.markdown(df_style.to_html(), unsafe_allow_html=True)
 
-    st.markdown("Despite its progress, <font color=#FF7043>Sri Lanka</font>  remains a country marked by instability and uncertainty, making it difficult to predict even its near future.", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        Despite its progress, <font color={COLORS["Sri Lanka"]}>Sri Lanka</font>  remains a country marked by instability and uncertainty, making it difficult to predict even its near future.""", unsafe_allow_html=True)

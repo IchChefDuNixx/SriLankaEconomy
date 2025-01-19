@@ -44,9 +44,12 @@ st.sidebar.markdown("""
 """)
 
 
-
 # Title and Introduction
-st.title("Incidents in Sri Lanka and Germany")
+st.markdown(f"""
+    <h1>
+        Incidents in <font color={COLORS["Sri Lanka"]}>Sri Lanka</font> and <font color={COLORS["Germany"]}>Germany</font>
+    </h1>
+    """, unsafe_allow_html=True)
 st.markdown("""Explore key historical incidents, their impact, and related interactive visualizations.""")
 
 # Status Quo in Sri Lanka section
