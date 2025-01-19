@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8501
 
 # Set the default command to run Streamlit
-CMD ["streamlit", "run", "Code/vis.py"]
+CMD ["streamlit", "run", "Code/Sri Lanka's Journey.py"]

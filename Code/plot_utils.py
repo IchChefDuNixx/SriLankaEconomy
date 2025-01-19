@@ -40,7 +40,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         with st.container(border=True, height=192):
             event_data = sl_events[selected_year]
             # syntax: [label](page_name#section_id)
-            st.markdown(f"[{event_data['Name']}](incidents#{event_data['Id']})")
+            st.markdown(f"[{event_data['Name']}](Incidents#{event_data['Id']})")
             st.markdown(f"{event_data['Description']}")
             st.markdown(f"{event_data['Effect']}")
 
@@ -100,7 +100,7 @@ def plot_panel1(data: dict[str, dict[str, pd.DataFrame]], sl_events: dict[int, d
         mode='lines', # hide markers
         line=dict(width=3),
         marker=dict(size=6),#, color=n),
-        hoverinfo="none", # TODO: would be nice to see the year (y-value without the line color inside the tooltip)
+        hoverinfo="none", # would be nicer to see the year (y-value without the line color inside the tooltip)
     )
 
     # plot data
@@ -287,7 +287,6 @@ def plot_GDP_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     return fig
 
 
-# TODO: ask breunig about dotted line methodology change
 def plot_happiness_data(data: dict[str, pd.DataFrame]) -> go.Figure:
     fig = go.Figure()
     hovertemplate = (
@@ -416,7 +415,6 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
         unsafe_allow_html=True
     )
 
-    # TODO: styling
     # Common config for all plots
     common_layout = dict(
         height=400,
@@ -435,7 +433,6 @@ def plot_panel2(data: dict[str, dict[str, pd.DataFrame]], plot_descriptions: dic
         yaxis=dict(),
     )
 
-    # TODO: styling
     common_traces = dict(
         mode='lines+markers',
         line=dict(width=2),

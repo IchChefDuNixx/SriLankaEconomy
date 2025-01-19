@@ -4,12 +4,6 @@ from plot_utils import plot_panel1, plot_panel2
 from definitions import add_heading_and_intro, add_summary
 
 
-
-
-# TODO: https://plotly.com/python/range-slider/
-# TODO: decide on styling (colors, marks, etc.)
-
-
 data_dir = Path(__file__).parent.parent / 'data'
 sl_events_path = data_dir / 'sl_events.json'
 inflation_path = data_dir / 'inflation/Inflation_Germany_SriLanka_2000_2023.csv'
