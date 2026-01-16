@@ -1,4 +1,3 @@
-import json
 import os
 
 import pandas as pd
@@ -458,11 +457,8 @@ partnerships and domestic initiatives to build a more resilient future.
 """)
 
 
-
 # Footer
 st.markdown("""
 ---
 This dashboard provides a comparative study of significant incidents in Sri Lanka and Germany.
 """)
-
-

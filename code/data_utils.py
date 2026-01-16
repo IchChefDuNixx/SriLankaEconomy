@@ -58,7 +58,7 @@ def load_tourism_data(path: str | PathLike[str]) -> dict[str, pd.DataFrame]:
     df = pd.read_csv(path, index_col=[0, 1])
     de = pd.DataFrame(df.xs('Germany', level=1))
     sl = pd.DataFrame(df.xs('Sri Lanka', level=1))
-    return {"sl": sl, "de": de}
+    return {"de": de, "sl": sl}
 
 
 def load_data(
